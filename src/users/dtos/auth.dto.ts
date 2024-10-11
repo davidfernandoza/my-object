@@ -22,7 +22,7 @@ export class LoginDto {
 export class RegisterDto extends LoginDto {}
 
 export class LogoutDto {
-  @IsEmail()
+  @IsString()
   @IsNotEmpty()
 	@MinLength(6)
 	@MaxLength(20)
