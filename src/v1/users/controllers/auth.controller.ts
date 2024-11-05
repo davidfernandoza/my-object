@@ -8,8 +8,8 @@ import { ApiKeyGuard } from '@users-v1/guards/api-key.guard';
 export class AuthController {
 	private authServices: AuthInterface;
 
-	constructor() {
-		this.setAuthServices(new AuthServices());
+	constructor(private readonly authServicesSingleton: AuthServices) {
+		this.setAuthServices(this.authServicesSingleton);
 	}
 
 	setAuthServices(authServices: AuthInterface) {
@@ -23,6 +23,7 @@ export class AuthController {
 	}
 
 	@Post('login')
+	// @UseGuards(ApiKeyGuard)
 	@HttpCode(HttpStatus.ACCEPTED)
 	async login(@Body() payload: LoginDto) {
 		return await this.authServices.login(payload);
