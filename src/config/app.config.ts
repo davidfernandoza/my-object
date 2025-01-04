@@ -13,6 +13,19 @@ export const appConfig = registerAs('config', () => ({
 		salt: process.env.APP_SALT,
 		environment: process.env.APP_ENVIRONMENT,
 	},
+	database: {
+		type: process.env.DB_TYPE || 'mysql',
+		host: process.env.DB_HOST || 'localhost',
+		port: Number(process.env.DB_PORT) || 3306,
+		username: process.env.DB_USERNAME || 'root',
+		password: process.env.DB_PASSWORD || 'root',
+		database: process.env.DB_DATABASE || 'test',
+	},
+	documentation: {
+		url_development: process.env.DOC_URL_DEVELOPMENT,
+		url_testing: process.env.DOC_URL_TESTING,
+		url_production: process.env.DOC_URL_PRODUCTION,
+	},
 	apiKey: process.env.API_KEY,
 }));
 
@@ -23,6 +36,15 @@ export const appConfigSchema = joi.object({
 	APP_SALT: joi.string().required(),
 	APP_ENVIRONMENT: joi.string().required(),
 	API_KEY: joi.string(),
+	DB_TYPE: joi.string().valid('mysql', 'postgres', 'mariadb', 'sqlite', 'mssql').required(),
+	DB_HOST: joi.string().required(),
+	DB_PORT: joi.number().required(),
+	DB_USERNAME: joi.string().required(),
+	DB_PASSWORD: joi.string().required(),
+	DB_DATABASE: joi.string().required(),
+	DOC_URL_DEVELOPMENT: joi.string().required(),
+	DOC_URL_TESTING: joi.string().required(),
+	DOC_URL_PRODUCTION: joi.string().required(),
 });
 
 /*

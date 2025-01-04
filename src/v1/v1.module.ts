@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
 import { UsersModule } from '@users-v1/users.module';
 import { CompaniesModule } from '@companies-v1/companies.module';
-import { CommonModule } from '@common-v1/common.module';
+import { ItemsModule } from './items/items.module';
 
 @Module({
-	imports: [UsersModule, CompaniesModule, CommonModule],
+	imports: [UsersModule, CompaniesModule, ItemsModule],
 })
 export class V1Module {}

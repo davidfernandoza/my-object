@@ -1,6 +1,6 @@
 import { Controller, UseGuards } from '@nestjs/common';
-import { ApiKeyGuard } from '@users-v1/guards/api-key.guard';
+import { ApiKeyGuard } from '@auth/guards/api-key.guard';
 
 @UseGuards(ApiKeyGuard)
-@Controller('v1/user')
+@Controller({ path: 'users', version: '1' })
 export class UserController {}
