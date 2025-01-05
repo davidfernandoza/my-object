@@ -33,14 +33,14 @@
       "@common/*": [
         "src/common/*"
       ],
-      "@users-v1/*": [
-        "./src/v1/users/*"
+      "@user-v1/*": [
+        "./src/v1/user/*"
       ],
-      "@companies-v1/*": [
-        "./src/v1/companies/*"
+      "@company-v1/*": [
+        "src/v1/company/*"
       ],
       "@item-v1/*": [
-        "./src/v1/items/*"
+        "src/v1/item/*"
       ],
       "@documentation/*": [
         "./src/documentation/*"

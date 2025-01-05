@@ -12,7 +12,7 @@ export class AuthController {
 	private authServices: AuthInterface;
 
 	constructor(private readonly authServicesSingleton: AuthServices) {
-		this.setAuthServices(this.authServicesSingleton);
+		// this.setAuthServices(this.authServicesSingleton);
 	}
 
 	setAuthServices(authServices: AuthInterface) {

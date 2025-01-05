@@ -4,7 +4,10 @@ import { SwaggerModule } from '@nestjs/swagger';
 
 import { AppModule } from '@src/app.module';
 import { AuthModule } from '@auth/auth.module';
-import { CompaniesModule } from '@src/v1/companies/companies.module';
+import { CompanyModule as CompanyModuleV1 } from '@company-v1/company.module';
+import { UserModule as UserModuleV1 } from '@user-v1/user.module';
+import { ItemModule as ItemModuleV1 } from '@item-v1/item.module';
+import { CommonModule } from '@common/common.module';
 import { ConfigService } from '@config/app.config';
 import { configV1 } from '@documentation/config/swagger-api-v1';
 import { configV2 } from '@documentation/config/swagger-api-v2';
@@ -31,13 +34,13 @@ async function bootstrap() {
 	 * Swagger documentation
 	 */
 	const documentV1 = SwaggerModule.createDocument(app, configV1, {
-		include: [AuthModule, CompaniesModule],
+		include: [AuthModule, CommonModule, UserModuleV1, CompanyModuleV1, ItemModuleV1],
 	});
 	documentV1.paths = removePrefixApi(documentV1);
 	SwaggerModule.setup('docs/v1', app, documentV1);
 
 	const documentV2 = SwaggerModule.createDocument(app, configV2, {
-		include: [AuthModule],
+		include: [AuthModule, CommonModule],
 	});
 	documentV2.paths = removePrefixApi(documentV2);
 	SwaggerModule.setup('docs/v2', app, documentV2);

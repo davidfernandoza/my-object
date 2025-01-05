@@ -1,4 +1,4 @@
-import { ApiKeyGuard } from '@users-v1/guards/api-key.guard';
+import { ApiKeyGuard } from '@user-v1/guards/api-key.guard';
 import { Reflector } from '@nestjs/core';
 
 describe('ApiKeyGuard', () => {
