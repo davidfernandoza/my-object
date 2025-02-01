@@ -7,6 +7,7 @@ import {
 	ManyToOne,
 	JoinColumn,
 	DeleteDateColumn,
+	Index,
 } from 'typeorm';
 
 import { User } from '@database/entities/user/user.entity';
@@ -17,7 +18,8 @@ export class Booking {
 	@PrimaryGeneratedColumn()
 	id: number;
 
-	@Column({ type: 'varchar', length: 120 })
+	@Index()
+	@Column({ type: 'varchar', collation: 'utf8mb4_spanish2_ci', length: 120 })
 	title: string;
 
 	@Column({ type: 'text', nullable: true })
@@ -26,6 +28,7 @@ export class Booking {
 	@Column({ type: 'datetime' })
 	date_time: Date;
 
+	@Index()
 	@Column({ type: 'enum', enum: ['pendiente', 'aprobado', 'cancelado'] })
 	status: string;
 
@@ -43,12 +46,14 @@ export class Booking {
 	@JoinColumn({ name: 'office_id' })
 	office: Office; // Relation
 
-	@CreateDateColumn({ type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
+	@Index()
+	@CreateDateColumn({ type: 'timestamp' })
 	created_at: Date;
 
-	@UpdateDateColumn({ type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
+	@UpdateDateColumn({ type: 'timestamp' })
 	updated_at: Date;
 
-	@DeleteDateColumn({ type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
+	@Index()
+	@DeleteDateColumn({ type: 'timestamp' })
 	deleted_at: Date;
 }

@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Account Activation</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #ffffff;
+      color: #333;
+    }
+		.logo-container{
+			max-width: 600px;
+      margin: 30px auto;
+			text-align: center;
+		}
+		.logo{
+			width: 200px;
+		}
+    .container {
+      max-width: 600px;
+      margin: 20px auto;
+      background: #f4f4f4;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+    }
+    .header {
+      background-color: #3ec0c8;
+      color: #f4f4f4;
+      text-align: center;
+      padding: 20px 10px;
+      font-size: 24px;
+    }
+    .content {
+      padding: 20px;
+      line-height: 1.3;
+      text-align: center;
+    }
+    .code {
+      font-size: 28px;
+      font-weight: bold;
+      color: #384c6c;
+      margin: 20px 0;
+    }
+    .footer {
+      text-align: center;
+      padding: 10px;
+      font-size: 14px;
+      color: #777;
+      border-top: 1px solid #e0e0e0;
+    }
+    a {
+      color: #3ec0c8;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+	<div class="logo-container">
+		<img src="https://firebasestorage.googleapis.com/v0/b/joplin-53e36.appspot.com/o/MyObject%2Flogo.png?alt=media&token=7af76581-313a-4482-b3fb-13beddb14ca6" alt="My Object Logo" class="logo">
+	</div>
+  <div class="container">
+    <div class="header">
+      Activa tu cuenta
+    </div>
+    <div class="content">
+      <p>Hola!</p>
+      <p>Gracias por registrarte en <strong style="color: #384c6c;"> My Object </strong>.</p>
+			<p>Por favor, utiliza el siguiente c&oacute;digo para activar tu cuenta:</p>
+      <div class="code">{{ code }}</div>
+      <small>Sí no has solicitado este codigo de activaci&oacute;n, por favor ignora este correo.</small>
+			<br>
+      <small>¿Necesitas ayuda? Visita la siguiente pagina de <a href="https://myobject.com/support">Soporte</a>.</small>
+    </div>
+    <div class="footer">
+      &copy; 2025 My Object Company. Todos los derechos reservados.
+    </div>
+  </div>
+</body>
+</html>

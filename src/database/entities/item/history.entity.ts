@@ -7,6 +7,7 @@ import {
 	ManyToOne,
 	DeleteDateColumn,
 	JoinColumn,
+	Index,
 } from 'typeorm';
 
 import { Item } from '@database/entities/item/item.entity';
@@ -20,12 +21,14 @@ export class History {
 	@Column({ type: 'text' })
 	description: string;
 
+	@Index()
 	@Column({
 		type: 'enum',
 		enum: ['lista de espera', 'proceso', 'finalizado', 'cancelado', 'entregado'],
 	})
 	status: string;
 
+	@Index()
 	@Column({ type: 'datetime' })
 	last_date: Date;
 
@@ -43,12 +46,14 @@ export class History {
 	@JoinColumn({ name: 'employeer_id' })
 	employeer: Employeer; // Relation
 
-	@CreateDateColumn({ type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
+	@Index()
+	@CreateDateColumn({ type: 'timestamp' })
 	created_at: Date;
 
-	@UpdateDateColumn({ type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
+	@UpdateDateColumn({ type: 'timestamp' })
 	updated_at: Date;
 
-	@DeleteDateColumn({ type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
+	@Index()
+	@DeleteDateColumn({ type: 'timestamp' })
 	deleted_at: Date;
 }

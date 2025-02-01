@@ -8,6 +8,7 @@ import {
 	ManyToOne,
 	DeleteDateColumn,
 	JoinColumn,
+	Index,
 } from 'typeorm';
 
 import { Booking } from '@database/entities/company/booking.entity';
@@ -21,22 +22,23 @@ export class Office {
 	@PrimaryGeneratedColumn()
 	id: number;
 
-	@Column({ type: 'varchar', length: 200 })
+	@Index()
+	@Column({ type: 'varchar', collation: 'utf8mb4_spanish2_ci', length: 200 })
 	address: string;
 
-	@Column({ type: 'varchar', length: 200, nullable: true })
+	@Column({ type: 'varchar', collation: 'utf8mb4_spanish2_ci', length: 200, nullable: true })
 	map_coordinates: string;
 
-	@Column({ type: 'varchar', length: 20, unique: true })
+	@Column({ type: 'varchar', collation: 'utf8mb4_spanish2_ci', length: 20, unique: true })
 	phone_1: string;
 
-	@Column({ type: 'varchar', length: 20, nullable: true })
+	@Column({ type: 'varchar', collation: 'utf8mb4_spanish2_ci', length: 20, nullable: true })
 	phone_2: string;
 
-	@Column({ type: 'varchar', length: 120, unique: true })
+	@Column({ type: 'varchar', collation: 'utf8mb4_spanish2_ci', length: 120, unique: true })
 	email_1: string;
 
-	@Column({ type: 'varchar', length: 120, nullable: true })
+	@Column({ type: 'varchar', collation: 'utf8mb4_spanish2_ci', length: 120, nullable: true })
 	email_2: string;
 
 	@OneToMany(() => Booking, booking => booking.office)
@@ -62,12 +64,14 @@ export class Office {
 	@JoinColumn({ name: 'company_id' })
 	company: Company; // Relation
 
-	@CreateDateColumn({ type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
+	@Index()
+	@CreateDateColumn({ type: 'timestamp' })
 	created_at: Date;
 
-	@UpdateDateColumn({ type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
+	@UpdateDateColumn({ type: 'timestamp' })
 	updated_at: Date;
 
-	@DeleteDateColumn({ type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
+	@Index()
+	@DeleteDateColumn({ type: 'timestamp' })
 	deleted_at: Date;
 }

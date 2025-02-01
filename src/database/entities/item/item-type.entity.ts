@@ -6,6 +6,7 @@ import {
 	UpdateDateColumn,
 	OneToMany,
 	DeleteDateColumn,
+	Index,
 } from 'typeorm';
 
 import { Item } from '@database/entities/item/item.entity';
@@ -15,18 +16,20 @@ export class ItemType {
 	@PrimaryGeneratedColumn()
 	id: number;
 
-	@Column({ type: 'varchar', length: 80, unique: true })
+	@Column({ type: 'varchar', collation: 'utf8mb4_spanish2_ci', length: 80, unique: true })
 	name: string;
 
 	@OneToMany(() => Item, item => item.item_type)
 	items: Item[];
 
-	@CreateDateColumn({ type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
+	@Index()
+	@CreateDateColumn({ type: 'timestamp' })
 	created_at: Date;
 
-	@UpdateDateColumn({ type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
+	@UpdateDateColumn({ type: 'timestamp' })
 	updated_at: Date;
 
-	@DeleteDateColumn({ type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
+	@Index()
+	@DeleteDateColumn({ type: 'timestamp' })
 	deleted_at: Date;
 }

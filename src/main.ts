@@ -1,6 +1,9 @@
-import { NestFactory } from '@nestjs/core';
+import { HttpAdapterHost, NestFactory } from '@nestjs/core';
 import { ValidationPipe, VersioningType } from '@nestjs/common';
 import { SwaggerModule } from '@nestjs/swagger';
+import { useContainer } from 'class-validator';
+import * as Sentry from '@sentry/node';
+import '@config/sentry.config';
 
 import { AppModule } from '@src/app.module';
 import { AuthModule } from '@auth/auth.module';
@@ -11,6 +14,7 @@ import { CommonModule } from '@common/common.module';
 import { ConfigService } from '@config/app.config';
 import { configV1 } from '@documentation/config/swagger-api-v1';
 import { configV2 } from '@documentation/config/swagger-api-v2';
+import { SentryFilter } from '@config/sentry.config';
 
 async function bootstrap() {
 	const app = await NestFactory.create(AppModule);
@@ -23,12 +27,26 @@ async function bootstrap() {
 	const configService = app.get(ConfigService);
 	const config = configService.getConfig();
 
+	// Inicializar sentry
+	Sentry.init({
+		dsn: config.sentry.dsn,
+		enabled: config.sentry.enable,
+	});
+
+	// Capturar todos los errores y pasarlo por el filtro de sentry
+	const { httpAdapter } = app.get(HttpAdapterHost);
+	app.useGlobalFilters(new SentryFilter(httpAdapter));
+
+	// Validaciones de DTO
 	app.useGlobalPipes(
 		new ValidationPipe({
 			whitelist: true, // ignora los atributos que no existen en el dto
 			forbidNonWhitelisted: true, // retorna un error con los atributos no permitidos
 		}),
 	);
+
+	// Registrar los decoradores que necesitan la inyeccion de nest
+	useContainer(app.select(AppModule), { fallbackOnErrors: true });
 
 	/*
 	 * Swagger documentation

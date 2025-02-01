@@ -6,7 +6,8 @@ import { V1Module } from '@src/v1/v1.module';
 import { V2Module } from '@src/v2/v2.module';
 import { ConfigModule } from '@config/config.module';
 import { DatabaseModule } from '@database/database.module';
-import { appConfig, appConfigSchema } from '@config/app.config';
+import { appConfig } from '@config/app.config';
+import { appConfigSchema } from '@config/schema.config';
 import { AuthModule } from '@auth/auth.module';
 import { CommonModule } from '@common/common.module';
 
@@ -23,12 +24,13 @@ import { CommonModule } from '@common/common.module';
 			validationSchema: appConfigSchema,
 		}),
 		ConfigModule,
+		DatabaseModule,
 		AuthModule,
 		CommonModule,
-		DatabaseModule,
 		V1Module,
 		V2Module,
 	],
+	// providers: [IsUniqueConstraint],
 	providers: [],
 	exports: [],
 })

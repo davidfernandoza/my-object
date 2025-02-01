@@ -8,6 +8,7 @@ import {
 	OneToMany,
 	DeleteDateColumn,
 	JoinColumn,
+	Index,
 } from 'typeorm';
 
 import { Department } from '@database/entities/common/department.entity';
@@ -19,7 +20,7 @@ export class City {
 	@PrimaryGeneratedColumn()
 	id: number;
 
-	@Column({ type: 'varchar', length: 60, unique: true })
+	@Column({ type: 'varchar', collation: 'utf8mb4_spanish2_ci', length: 60, unique: true })
 	name: string;
 
 	@ManyToOne(() => Department, department => department.cities, {
@@ -35,12 +36,14 @@ export class City {
 	@OneToMany(() => Office, office => office.city)
 	offices: Office[]; // Relation
 
-	@CreateDateColumn({ type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
+	@Index()
+	@CreateDateColumn({ type: 'timestamp' })
 	created_at: Date;
 
-	@UpdateDateColumn({ type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
+	@UpdateDateColumn({ type: 'timestamp' })
 	updated_at: Date;
 
-	@DeleteDateColumn({ type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
+	@Index()
+	@DeleteDateColumn({ type: 'timestamp' })
 	deleted_at: Date;
 }

@@ -8,6 +8,7 @@ import {
 	OneToMany,
 	DeleteDateColumn,
 	JoinColumn,
+	Index,
 } from 'typeorm';
 
 import { Office } from '@database/entities/company/office.entity';
@@ -19,9 +20,11 @@ export class Employeer {
 	@PrimaryGeneratedColumn()
 	id: number;
 
-	@Column({ type: 'varchar', length: 100, nullable: true })
+	@Index()
+	@Column({ type: 'varchar', collation: 'utf8mb4_spanish2_ci', length: 100, nullable: true })
 	code: string;
 
+	@Index()
 	@Column({ type: 'boolean', default: true })
 	status: boolean;
 
@@ -42,12 +45,14 @@ export class Employeer {
 	@OneToMany(() => History, history => history.employeer)
 	histories: History[]; // Relation
 
-	@CreateDateColumn({ type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
+	@Index()
+	@CreateDateColumn({ type: 'timestamp' })
 	created_at: Date;
 
-	@UpdateDateColumn({ type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
+	@UpdateDateColumn({ type: 'timestamp' })
 	updated_at: Date;
 
-	@DeleteDateColumn({ type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
+	@Index()
+	@DeleteDateColumn({ type: 'timestamp' })
 	deleted_at: Date;
 }

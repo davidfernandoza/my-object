@@ -11,13 +11,3 @@ export class LoginDTO {
 	@MaxLength(20)
 	readonly password: string;
 }
-
-export class RegisterDTO extends LoginDTO {}
-
-export class LogoutDTO {
-	@IsString()
-	@IsNotEmpty()
-	@MinLength(6)
-	@MaxLength(20)
-	readonly token: string;
-}

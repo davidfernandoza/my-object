@@ -10,14 +10,14 @@ import { Reflector } from '@nestjs/core';
 import { ConfigType } from '@nestjs/config';
 import { Observable } from 'rxjs';
 import { Request } from 'express';
-import { MessagesServices } from '@common/services/messages.services';
+import { MessagesService } from '@src/common/services/messages.service';
 import { IS_PUBLIC_KEY } from '@common/decorators/is-public.decorator';
 import { GET_POKEMONS } from '@config/concept-test.config';
 import { appConfig } from '@config/app.config';
 
 @Injectable()
 export class ApiKeyGuard implements CanActivate {
-	private readonly MS: MessagesServices;
+	private readonly MS: MessagesService;
 	constructor(
 		private reflector: Reflector,
 		@Inject(GET_POKEMONS) private pokemons: any[],
@@ -27,7 +27,7 @@ export class ApiKeyGuard implements CanActivate {
 		 */
 		@Inject(appConfig.KEY) private config: ConfigType<typeof appConfig>,
 	) {
-		this.MS = new MessagesServices();
+		this.MS = new MessagesService();
 	}
 
 	canActivate(context: ExecutionContext): boolean | Promise<boolean> | Observable<boolean> {

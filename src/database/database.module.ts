@@ -2,25 +2,43 @@ import { Module, Global } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { ConfigService } from '@config/app.config';
-import { User } from '@src/database/entities/user/user.entity';
-import { IdentificationType } from '@src/database/entities/user/identification-type.entity';
-import { City } from '@src/database/entities/common/city.entity';
-import { Office } from '@src/database/entities/company/office.entity';
-import { Company } from '@src/database/entities/company/company.entity';
-import { Employeer } from '@src/database/entities/company/employeer.entity';
-import { Item } from '@src/database/entities/item/item.entity';
-import { ItemType } from '@src/database/entities/item/item-type.entity';
-import { History } from '@src/database/entities/item/history.entity';
-import { Booking } from '@src/database/entities/company/booking.entity';
-import { Auth } from '@src/database/entities/auth/auth.entity';
-import { Department } from '@src/database/entities/common/department.entity';
+import { User } from '@database/entities/user/user.entity';
+import { IdentificationType } from '@database/entities/user/identification-type.entity';
+import { City } from '@database/entities/common/city.entity';
+import { Office } from '@database/entities/company/office.entity';
+import { Company } from '@database/entities/company/company.entity';
+import { Employeer } from '@database/entities/company/employeer.entity';
+import { Item } from '@database/entities/item/item.entity';
+import { ItemType } from '@database/entities/item/item-type.entity';
+import { History } from '@database/entities/item/history.entity';
+import { Booking } from '@database/entities/company/booking.entity';
+import { Auth } from '@database/entities/auth/auth.entity';
+import { Department } from '@database/entities/common/department.entity';
+import { UserRepository } from '@database/repositories/user/user.repository';
+import { AuthRepository } from '@database/repositories/auth/auth.repository';
 
-/*
- * Conexion para los modelos (entidades)
+const entities = [
+	User,
+	IdentificationType,
+	City,
+	Office,
+	Company,
+	Employeer,
+	Item,
+	ItemType,
+	History,
+	Booking,
+	Auth,
+	Department,
+];
+
+/**
+ * DatabaseModule: módulo global para la configuración de la base de datos.
  */
 @Global()
 @Module({
 	imports: [
+		// Configuración asincrónica de TypeORM
 		TypeOrmModule.forRootAsync({
 			useFactory: (configService: ConfigService) => {
 				const type = configService.getConfig().database.type as
@@ -38,26 +56,17 @@ import { Department } from '@src/database/entities/common/department.entity';
 					database: configService.getConfig().database.database,
 					synchronize: false,
 					logging: false,
+					timezone: '-05:00',
+					entities,
 				};
 			},
 			inject: [ConfigService],
 		}),
-		TypeOrmModule.forFeature([
-			User,
-			IdentificationType,
-			City,
-			Office,
-			Company,
-			Employeer,
-			Item,
-			ItemType,
-			History,
-			Booking,
-			Auth,
-			Department,
-		]),
+
+		// Registra las entidades para los repositorios
+		TypeOrmModule.forFeature(entities),
 	],
-	providers: [],
-	exports: [TypeOrmModule],
+	providers: [UserRepository, AuthRepository],
+	exports: [TypeOrmModule, UserRepository, AuthRepository],
 })
 export class DatabaseModule {}

@@ -9,6 +9,7 @@ import {
 	OneToMany,
 	DeleteDateColumn,
 	JoinColumn,
+	Index,
 } from 'typeorm';
 
 import { Auth } from '@database/entities/auth/auth.entity';
@@ -23,20 +24,26 @@ export class User {
 	@PrimaryGeneratedColumn()
 	id: number;
 
-	@Column({ type: 'varchar', length: 120 })
+	@Index()
+	@Column({ type: 'varchar', collation: 'utf8mb4_spanish2_ci', length: 120 })
 	names: string;
 
-	@Column({ type: 'varchar', length: 120 })
+	@Column({ type: 'varchar', collation: 'utf8mb4_spanish2_ci', length: 120 })
 	last_names: string;
 
-	@Column({ type: 'varchar', length: 25 })
+	@Index()
+	@Column({ type: 'varchar', collation: 'utf8mb4_spanish2_ci', length: 25 })
 	identification_number: string;
 
-	@Column({ type: 'varchar', length: 20, nullable: true })
+	@Column({ type: 'varchar', collation: 'utf8mb4_spanish2_ci', length: 20, nullable: true })
 	phone: string;
 
-	@OneToOne(() => Auth, auth => auth.user) // one to one relation inverse
-	auth: Auth; // Relation
+	@OneToOne(() => Auth, auth => auth.user, { nullable: false }) // one to one relation
+	@JoinColumn({ name: 'auth_id' })
+	auth: Auth;
+
+	@Column({ unique: true, name: 'auth_id' }) // Clave foránea única
+	auth_id: number;
 
 	@ManyToOne(() => City, city => city.users, {
 		onDelete: 'RESTRICT',
@@ -61,12 +68,14 @@ export class User {
 	@OneToMany(() => Item, item => item.user)
 	items: Item[]; // Relation
 
-	@CreateDateColumn({ type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
+	@Index()
+	@CreateDateColumn({ type: 'timestamp' })
 	created_at: Date;
 
-	@UpdateDateColumn({ type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
+	@UpdateDateColumn({ type: 'timestamp' })
 	updated_at: Date;
 
-	@DeleteDateColumn({ type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
+	@Index()
+	@DeleteDateColumn({ type: 'timestamp' })
 	deleted_at: Date;
 }
