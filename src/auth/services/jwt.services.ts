@@ -10,7 +10,7 @@ export class JwtServices {
 		private readonly configService: ConfigService,
 	) {}
 
-	public generateAccessToken(payload: IJwtPayload) {
+	public generateAccessToken(payload: IJwtPayload): { access_token: string } {
 		return {
 			access_token: this.jwtService.sign(payload, {
 				secret: this.configService.getConfig().jwt.access_secret,
@@ -19,12 +19,23 @@ export class JwtServices {
 		};
 	}
 
-	public generateRefreshToken(payload: IJwtPayload) {
+	public generateRefreshToken(payload: IJwtPayload): { refresh_token: string } {
 		return {
 			refresh_token: this.jwtService.sign(payload, {
 				secret: this.configService.getConfig().jwt.refresh_secret,
 				expiresIn: this.configService.getConfig().jwt.refresh_expiration,
 			}),
 		};
+	}
+	public validateAccessToken(token: string) {
+		return this.jwtService.verify(token, {
+			secret: this.configService.getConfig().jwt.access_secret,
+		});
+	}
+
+	public validateRefreshToken(token: string) {
+		return this.jwtService.verify(token, {
+			secret: this.configService.getConfig().jwt.refresh_secret,
+		});
 	}
 }

@@ -16,7 +16,8 @@ import { RegisterDTO, RegisterResponseDTO } from '@auth/dtos/register.dto';
 import { LoginDTO, LoginResponseDTO } from '@auth/dtos/login.dto';
 
 import { AuthServices } from '@auth/services/auth.services';
-import { IAuthService } from '@src/auth/interfaces/auth-service.interface';
+import { IAuthService } from '@auth/interfaces/auth-service.interface';
+import { RefreshTokenDTO } from '@auth/dtos/jwt.dto';
 // import { IdRequiredPipe } from '@common/decorators/pipes/id-required.pipe';
 // import { AddIdInBodyInterceptor } from '@common/interceptors/add-id-in-body.interceptor';
 // import { ApiKeyGuard } from '@auth/guards/api-key.guard';
@@ -47,6 +48,12 @@ export class AuthController {
 	async login(@Body() payload: LoginDTO): Promise<LoginResponseDTO> {
 		const auth = await this.authServices.validateAuth(payload.email, payload.password);
 		return this.authServices.login(auth);
+	}
+
+	@Post('refresh-token')
+	@HttpCode(HttpStatus.ACCEPTED)
+	async refreshToken(@Body() payload: RefreshTokenDTO): Promise<LoginResponseDTO> {
+		return await this.authServices.refreshToken(payload.refresh_token);
 	}
 
 	// @Post('logout')

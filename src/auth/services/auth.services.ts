@@ -9,9 +9,10 @@ import { HelperService } from '@common/services/helper.service';
 import { MailService } from '@common/services/mail.service';
 import { LoginResponseDTO } from '@auth/dtos/login.dto';
 import { JwtServices } from '@auth/services/jwt.services';
+import { IAuthService } from '@auth/interfaces/auth-service.interface';
 
 @Injectable()
-export class AuthServices {
+export class AuthServices implements IAuthService {
 	constructor(
 		private readonly authRepository: AuthRepository,
 		private readonly templateService: TemplateService,
@@ -38,16 +39,16 @@ export class AuthServices {
 			return { auth, tokens };
 		} catch (error) {
 			console.error(error, '****************');
-			throw new InternalServerErrorException(error);
+			throw new InternalServerErrorException(error.message);
 		}
 	}
 
-	async validateAuth(email: string, password: string): Promise<Auth> {
+	public async validateAuth(email: string, password: string): Promise<Auth> {
 		const auth = await this.authRepository.findOneBy({ email });
 		if (auth && (await auth.comparePassword(password))) {
 			return auth;
 		}
-		throw new UnauthorizedException();
+		throw new UnauthorizedException('Credentials invalid');
 	}
 
 	public login(auth: Auth): LoginResponseDTO {
@@ -56,5 +57,20 @@ export class AuthServices {
 		const refresh_token = this.jwtServices.generateRefreshToken(payload);
 		this.authRepository.update(auth.id, { ...refresh_token });
 		return { ...access_token, ...refresh_token };
+	}
+
+	async refreshToken(refreshToken: string): Promise<LoginResponseDTO> {
+		try {
+			const payload = this.jwtServices.validateRefreshToken(refreshToken);
+			const auth = await this.authRepository.findOne({
+				where: { id: payload.auth_id },
+			});
+			if (!auth || auth.refresh_token !== refreshToken) {
+				throw new UnauthorizedException('Token unavaliable');
+			}
+			return this.login(auth);
+		} catch (error) {
+			throw new UnauthorizedException(error.message);
+		}
 	}
 }
