@@ -42,3 +42,8 @@ export class RegisterDTO {
 	@Transform(({ value }) => value.toString())
 	wathsapp: string;
 }
+
+export class RegisterResponseDTO {
+	auth: Auth;
+	tokens: object;
+}

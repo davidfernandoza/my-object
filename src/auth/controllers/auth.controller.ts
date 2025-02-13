@@ -12,8 +12,8 @@ import {
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 
-import { RegisterDTO } from '@auth/dtos/register.dto';
-// import { LoginDTO } from '@auth/dtos/login.dto';
+import { RegisterDTO, RegisterResponseDTO } from '@auth/dtos/register.dto';
+import { LoginDTO, LoginResponseDTO } from '@auth/dtos/login.dto';
 
 import { AuthServices } from '@auth/services/auth.services';
 import { IAuthService } from '@src/auth/interfaces/auth-service.interface';
@@ -38,18 +38,16 @@ export class AuthController {
 	@HttpCode(HttpStatus.CREATED)
 	// @UsePipes(IdRequiredPipe)
 	// @UseInterceptors(AddIdInBodyInterceptor)
-	async register(@Body() body: RegisterDTO) {
+	async register(@Body() body: RegisterDTO): Promise<RegisterResponseDTO> {
 		return await this.authServices.register(body);
 	}
 
-	// @Post('login')
-	// // @UseGuards(ApiKeyGuard)
-	// @HttpCode(HttpStatus.ACCEPTED)
-	// async login(@Body() payload: LoginDTO) {
-	// 	console.log('hola');
-
-	// 	return await this.authServices.login(payload);
-	// }
+	@Post('login')
+	@HttpCode(HttpStatus.ACCEPTED)
+	async login(@Body() payload: LoginDTO): Promise<LoginResponseDTO> {
+		const auth = await this.authServices.validateAuth(payload.email, payload.password);
+		return this.authServices.login(auth);
+	}
 
 	// @Post('logout')
 	// @UseGuards(ApiKeyGuard)

@@ -4,7 +4,6 @@ import * as joi from 'joi';
 export const appConfigSchema = joi.object({
 	APP_PORT: joi.number().required(),
 	APP_NAME: joi.string().required(),
-	APP_SALT: joi.string().required(),
 	APP_ENVIRONMENT: joi.string().required(),
 	API_KEY: joi.string(),
 	DB_TYPE: joi.string().valid('mysql', 'postgres', 'mariadb', 'sqlite', 'mssql').required(),
@@ -23,4 +22,8 @@ export const appConfigSchema = joi.object({
 	EMAIL_USER: joi.string().required(),
 	EMAIL_PASSWORD: joi.string().required(),
 	EMAIL_FROM: joi.string().required(),
+	JWT_ACCESS_SECRET: joi.string().required(),
+	JWT_ACCESS_EXPIRATION: joi.string().max(2).required(),
+	JWT_REFRESH_SECRET: joi.string().required(),
+	JWT_REFRESH_EXPIRATION: joi.string().max(2).required(),
 });

@@ -1,32 +1,31 @@
-import { Injectable, HttpStatus, InternalServerErrorException } from '@nestjs/common';
+import { Injectable, InternalServerErrorException, UnauthorizedException } from '@nestjs/common';
+import { plainToInstance } from 'class-transformer';
 
 import { Auth } from '@database/entities/auth/auth.entity';
-import { MessagesService } from '@common/services/messages.service';
-import { RegisterDTO } from '@auth/dtos/register.dto';
+import { RegisterDTO, RegisterResponseDTO } from '@auth/dtos/register.dto';
 import { AuthRepository } from '@database/repositories/auth/auth.repository';
 import { TemplateService } from '@common/services/template.service';
 import { HelperService } from '@common/services/helper.service';
 import { MailService } from '@common/services/mail.service';
+import { LoginResponseDTO } from '@auth/dtos/login.dto';
+import { JwtServices } from '@auth/services/jwt.services';
 
 @Injectable()
 export class AuthServices {
-	private readonly MS: MessagesService;
-
 	constructor(
 		private readonly authRepository: AuthRepository,
 		private readonly templateService: TemplateService,
 		private readonly helperService: HelperService,
 		private readonly mailService: MailService,
-	) {
-		this.MS = new MessagesService();
-	}
+		private readonly jwtServices: JwtServices,
+	) {}
 
-	async register(payload: RegisterDTO): Promise<Auth> {
+	async register(payload: RegisterDTO): Promise<RegisterResponseDTO> {
 		try {
 			const code = this.helperService.generateCode(6);
 			const view = this.templateService.compile('verify.email', { code });
 			const newAuth = this.authRepository.create({ ...payload, code_verification: Number(code) });
-			const register = await this.authRepository.save(newAuth);
+			let auth = await this.authRepository.save(newAuth);
 			this.mailService.sendEmail({
 				to: [payload.email],
 				subject: 'Creación de cuenta en My Object',
@@ -34,15 +33,28 @@ export class AuthServices {
 				type: 'html',
 				engine: 'nodemailer',
 			});
-			return register;
+			const tokens = this.login(auth);
+			auth = plainToInstance(Auth, auth);
+			return { auth, tokens };
 		} catch (error) {
-			console.error(error);
-			if (error instanceof Error) {
-				throw new InternalServerErrorException(this.MS.send(HttpStatus.INTERNAL_SERVER_ERROR), {
-					description: error.message,
-				});
-			}
-			throw new InternalServerErrorException(this.MS.send(HttpStatus.INTERNAL_SERVER_ERROR));
+			console.error(error, '****************');
+			throw new InternalServerErrorException(error);
 		}
+	}
+
+	async validateAuth(email: string, password: string): Promise<Auth> {
+		const auth = await this.authRepository.findOneBy({ email });
+		if (auth && (await auth.comparePassword(password))) {
+			return auth;
+		}
+		throw new UnauthorizedException();
+	}
+
+	public login(auth: Auth): LoginResponseDTO {
+		const payload = { auth_id: auth.id };
+		const access_token = this.jwtServices.generateAccessToken(payload);
+		const refresh_token = this.jwtServices.generateRefreshToken(payload);
+		this.authRepository.update(auth.id, { ...refresh_token });
+		return { ...access_token, ...refresh_token };
 	}
 }

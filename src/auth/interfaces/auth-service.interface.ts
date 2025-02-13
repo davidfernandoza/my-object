@@ -1,8 +1,10 @@
+import { RegisterDTO, RegisterResponseDTO } from '@auth/dtos/register.dto';
+import { LoginResponseDTO } from '@auth/dtos/login.dto';
 import { Auth } from '@database/entities/auth/auth.entity';
-import { RegisterDTO } from '@auth/dtos/register.dto';
 
 export interface IAuthService {
-	// login(payload: any): Promise<Auth>;
-	register(payload: RegisterDTO): Promise<Auth>;
+	login(payload: any): LoginResponseDTO;
+	register(payload: RegisterDTO): Promise<RegisterResponseDTO>;
+	validateAuth(email: string, password: string): Promise<Auth> | null;
 	// logout(payload: any): Promise<any>;
 }

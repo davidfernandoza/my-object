@@ -9,7 +9,6 @@ export const appConfig = registerAs('config', () => ({
 	app: {
 		port: process.env.APP_PORT,
 		name: process.env.APP_NAME,
-		salt: process.env.APP_SALT,
 		environment: process.env.APP_ENVIRONMENT,
 	},
 	database: {
@@ -35,6 +34,12 @@ export const appConfig = registerAs('config', () => ({
 		user: process.env.EMAIL_USER,
 		password: process.env.EMAIL_PASSWORD,
 		from: process.env.EMAIL_FROM,
+	},
+	jwt: {
+		access_secret: process.env.JWT_ACCESS_SECRET,
+		access_expiration: process.env.JWT_ACCESS_EXPIRATION,
+		refresh_secret: process.env.JWT_REFRESH_SECRET,
+		refresh_expiration: process.env.JWT_REFRESH_EXPIRATION,
 	},
 	apiKey: process.env.API_KEY,
 }));

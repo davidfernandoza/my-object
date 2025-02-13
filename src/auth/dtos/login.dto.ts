@@ -11,3 +11,8 @@ export class LoginDTO {
 	@MaxLength(20)
 	readonly password: string;
 }
+
+export class LoginResponseDTO {
+	readonly access_token: string;
+	readonly refresh_token: string;
+}
