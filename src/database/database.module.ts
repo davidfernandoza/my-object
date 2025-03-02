@@ -13,9 +13,11 @@ import { ItemType } from '@database/entities/item/item-type.entity';
 import { History } from '@database/entities/item/history.entity';
 import { Booking } from '@database/entities/company/booking.entity';
 import { Auth } from '@database/entities/auth/auth.entity';
+import { JWTBlacklist } from '@database/entities/auth/jwt-blacklist.entity';
 import { Department } from '@database/entities/common/department.entity';
 import { UserRepository } from '@database/repositories/user/user.repository';
 import { AuthRepository } from '@database/repositories/auth/auth.repository';
+import { JWTBlacklistRepository } from '@database/repositories/auth/jwt-blacklist.repository';
 
 const entities = [
 	User,
@@ -29,6 +31,7 @@ const entities = [
 	History,
 	Booking,
 	Auth,
+	JWTBlacklist,
 	Department,
 ];
 
@@ -66,7 +69,7 @@ const entities = [
 		// Registra las entidades para los repositorios
 		TypeOrmModule.forFeature(entities),
 	],
-	providers: [UserRepository, AuthRepository],
-	exports: [TypeOrmModule, UserRepository, AuthRepository],
+	providers: [UserRepository, AuthRepository, JWTBlacklistRepository],
+	exports: [TypeOrmModule, UserRepository, AuthRepository, JWTBlacklistRepository],
 })
 export class DatabaseModule {}

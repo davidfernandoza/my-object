@@ -5,6 +5,7 @@ import {
 	CreateDateColumn,
 	UpdateDateColumn,
 	OneToOne,
+	OneToMany,
 	DeleteDateColumn,
 	Index,
 	BeforeInsert,
@@ -14,6 +15,7 @@ import * as bcrypt from 'bcrypt';
 import { Exclude } from 'class-transformer';
 
 import { User } from '@database/entities/user/user.entity';
+import { JWTBlacklist } from '@database/entities/auth/jwt-blacklist.entity';
 
 @Entity('auth') // Table Name
 export class Auth {
@@ -44,6 +46,9 @@ export class Auth {
 
 	@OneToOne(() => User, user => user.auth) // one to one relation inverse
 	user: User; // Relation
+
+	@OneToMany(() => JWTBlacklist, jwtBlacklist => jwtBlacklist.auth)
+	tokensInBlackList: JWTBlacklist[]; // Relation
 
 	@Index()
 	@CreateDateColumn({ type: 'timestamp' })

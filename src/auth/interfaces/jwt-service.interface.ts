@@ -1,3 +1,3 @@
 export interface IJwtPayload {
-	auth_id: number;
+	id: number;
 }

@@ -5,6 +5,8 @@ import {
 	HttpCode,
 	HttpStatus,
 	UseGuards,
+	Req,
+	UnauthorizedException,
 	// UsePipes,
 	// Param,
 	// ParseIntPipe,
@@ -16,7 +18,7 @@ import { RegisterDTO, RegisterResponseDTO } from '@auth/dtos/register.dto';
 import { LoginDTO, LoginResponseDTO } from '@auth/dtos/login.dto';
 
 import { AuthServices } from '@auth/services/auth.services';
-import { IAuthService } from '@auth/interfaces/auth-service.interface';
+import { IAuthService, IAuthRequest } from '@auth/interfaces/auth-service.interface';
 import { RefreshTokenDTO } from '@auth/dtos/jwt.dto';
 import { StrategyAuthGuard } from '@auth/guards/strategy-auth.guard';
 // import { IdRequiredPipe } from '@common/decorators/pipes/id-required.pipe';
@@ -60,7 +62,11 @@ export class AuthController {
 	@Post('logout')
 	@UseGuards(StrategyAuthGuard)
 	@HttpCode(HttpStatus.NO_CONTENT)
-	async logout() {
-		return await this.authServices.logout();
+	async logout(@Req() request: IAuthRequest) {
+		const authHeader = request.headers['authorization'];
+		const accessToken = authHeader && authHeader.split(' ')[1];
+		const auth = request.auth;
+		if (!accessToken) throw new UnauthorizedException();
+		return await this.authServices.logout(auth.id, accessToken);
 	}
 }

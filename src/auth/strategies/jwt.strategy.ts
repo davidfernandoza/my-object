@@ -3,13 +3,17 @@ import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { ConfigService } from '@config/app.config';
 import { IJwtPayload } from '@auth/interfaces/jwt-service.interface';
+import { JwtServices } from '@auth/services/jwt.services';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
-	constructor(private readonly configService: ConfigService) {
+	constructor(
+		private readonly configService: ConfigService,
+		private readonly jwtServices: JwtServices,
+	) {
 		super({
 			jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-			secretOrKey: configService.getConfig().jwt.access_secret,
+			secretOrKey: configService.getConfig().jwt.accessSecret,
 			ignoreExpiration: false,
 			passReqToCallback: true,
 		});
@@ -21,10 +25,8 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
 		if (!token) throw new UnauthorizedException();
 
 		// Se consulta la lista negra de tokens
-		// const isBlacklisted = await this.tokenBlacklistService.isBlacklisted(token);
-		// if (isBlacklisted) throw new UnauthorizedException('');
-		console.log(token);
-
-		return { auth_id: payload.auth_id };
+		const inBlacklist = await this.jwtServices.inBlacklist(token);
+		if (inBlacklist) throw new UnauthorizedException('');
+		return { id: payload.id };
 	}
 }

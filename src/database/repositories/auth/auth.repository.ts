@@ -12,4 +12,8 @@ export class AuthRepository extends Repository<Auth> {
 	) {
 		super(repository.target, repository.manager, repository.queryRunner);
 	}
+
+	async getOneById(id: number) {
+		return await this.findOne({ where: { id } });
+	}
 }

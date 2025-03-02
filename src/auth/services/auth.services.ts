@@ -10,6 +10,7 @@ import { MailService } from '@common/services/mail.service';
 import { LoginResponseDTO } from '@auth/dtos/login.dto';
 import { JwtServices } from '@auth/services/jwt.services';
 import { IAuthService } from '@auth/interfaces/auth-service.interface';
+import { JWTBlacklistRepository } from '../../database/repositories/auth/jwt-blacklist.repository';
 
 @Injectable()
 export class AuthServices implements IAuthService {
@@ -19,6 +20,7 @@ export class AuthServices implements IAuthService {
 		private readonly helperService: HelperService,
 		private readonly mailService: MailService,
 		private readonly jwtServices: JwtServices,
+		private readonly jwtBlacklistRepository: JWTBlacklistRepository,
 	) {}
 
 	async register(payload: RegisterDTO): Promise<RegisterResponseDTO> {
@@ -52,7 +54,7 @@ export class AuthServices implements IAuthService {
 	}
 
 	public login(auth: Auth): LoginResponseDTO {
-		const payload = { auth_id: auth.id };
+		const payload = { id: auth.id };
 		const access_token = this.jwtServices.generateAccessToken(payload);
 		const refresh_token = this.jwtServices.generateRefreshToken(payload);
 		this.authRepository.update(auth.id, { ...refresh_token });
@@ -74,7 +76,10 @@ export class AuthServices implements IAuthService {
 		}
 	}
 
-	logout() {
-		console.log('hola');
+	async logout(id: number, token: string): Promise<void> {
+		const auth = await this.authRepository.getOneById(id);
+		if (!auth) throw new UnauthorizedException();
+		await this.jwtBlacklistRepository.addToken(auth, token);
+		await this.authRepository.update({ id }, { refresh_token: null });
 	}
 }

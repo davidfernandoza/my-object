@@ -20,9 +20,9 @@ export const appConfig = registerAs('config', () => ({
 		database: process.env.DB_DATABASE || 'test',
 	},
 	documentation: {
-		url_development: process.env.DOC_URL_DEVELOPMENT,
-		url_testing: process.env.DOC_URL_TESTING,
-		url_production: process.env.DOC_URL_PRODUCTION,
+		urlDevelopment: process.env.DOC_URL_DEVELOPMENT,
+		urlTesting: process.env.DOC_URL_TESTING,
+		urlProduction: process.env.DOC_URL_PRODUCTION,
 	},
 	sentry: {
 		dsn: process.env.SENTRY_DSN,
@@ -36,10 +36,10 @@ export const appConfig = registerAs('config', () => ({
 		from: process.env.EMAIL_FROM,
 	},
 	jwt: {
-		access_secret: process.env.JWT_ACCESS_SECRET,
-		access_expiration: process.env.JWT_ACCESS_EXPIRATION,
-		refresh_secret: process.env.JWT_REFRESH_SECRET,
-		refresh_expiration: process.env.JWT_REFRESH_EXPIRATION,
+		accessSecret: process.env.JWT_ACCESS_SECRET,
+		accessExpiration: process.env.JWT_ACCESS_EXPIRATION,
+		refreshSecret: process.env.JWT_REFRESH_SECRET,
+		refreshExpiration: process.env.JWT_REFRESH_EXPIRATION,
 	},
 	apiKey: process.env.API_KEY,
 }));
