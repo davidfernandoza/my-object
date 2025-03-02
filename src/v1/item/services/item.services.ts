@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 
-import { ItemInterface } from '@src/v1/item/interfaces/item.interface';
-import { Item } from '@src/database/entities/item/item.entity';
-import { CreateItemDTO, UpdateItemDTO } from '@src/v1/item/dtos/item.dto';
+// import { ItemInterface } from '@item-v1/interfaces/item.interface';
+// import { Item } from '@database/entities/item/item.entity';
+// import { CreateItemDTO, UpdateItemDTO } from '@item-v1/dtos/item.dto';
 
 @Injectable()
 // export class ItemServices implements ItemInterface {

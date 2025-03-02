@@ -1,5 +1,5 @@
-import { Item } from '@src/database/entities/item/item.entity';
-import { CreateItemDTO, UpdateItemDTO } from '@src/v1/item/dtos/item.dto';
+import { Item } from '@database/entities/item/item.entity';
+import { CreateItemDTO, UpdateItemDTO } from '@item-v1/dtos/item.dto';
 
 export interface ItemInterface {
 	get(id: number): Promise<Item>;

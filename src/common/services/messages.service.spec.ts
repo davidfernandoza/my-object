@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { MessagesService } from '@src/common/services/messages.service';
+import { MessagesService } from '@common/services/messages.service';
 
 describe('MessagesService', () => {
 	let provider: MessagesService;

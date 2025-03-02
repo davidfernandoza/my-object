@@ -4,7 +4,7 @@ import {
 	Body,
 	HttpCode,
 	HttpStatus,
-	// UseGuards,
+	UseGuards,
 	// UsePipes,
 	// Param,
 	// ParseIntPipe,
@@ -18,6 +18,7 @@ import { LoginDTO, LoginResponseDTO } from '@auth/dtos/login.dto';
 import { AuthServices } from '@auth/services/auth.services';
 import { IAuthService } from '@auth/interfaces/auth-service.interface';
 import { RefreshTokenDTO } from '@auth/dtos/jwt.dto';
+import { StrategyAuthGuard } from '@auth/guards/strategy-auth.guard';
 // import { IdRequiredPipe } from '@common/decorators/pipes/id-required.pipe';
 // import { AddIdInBodyInterceptor } from '@common/interceptors/add-id-in-body.interceptor';
 // import { ApiKeyGuard } from '@auth/guards/api-key.guard';
@@ -56,10 +57,10 @@ export class AuthController {
 		return await this.authServices.refreshToken(payload.refresh_token);
 	}
 
-	// @Post('logout')
-	// @UseGuards(ApiKeyGuard)
-	// @HttpCode(HttpStatus.NO_CONTENT)
-	// async logout(@Body() payload: LogoutDTO) {
-	// 	return await this.authServices.logout(payload);
-	// }
+	@Post('logout')
+	@UseGuards(StrategyAuthGuard)
+	@HttpCode(HttpStatus.NO_CONTENT)
+	async logout() {
+		return await this.authServices.logout();
+	}
 }

@@ -1,8 +1,8 @@
 import { Module, Global } from '@nestjs/common';
 import { HttpModule, HttpService } from '@nestjs/axios';
 
-import { EXTERNAL_SERVICE, EXTERNAL_URL, ConfigService } from '@src/config/app.config';
-import { getPokemons, GET_POKEMONS } from '@src/config/concept-test.config';
+import { EXTERNAL_SERVICE, EXTERNAL_URL, ConfigService } from '@config/app.config';
+import { getPokemons, GET_POKEMONS } from '@config/concept-test.config';
 
 @Global()
 @Module({

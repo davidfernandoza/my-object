@@ -5,7 +5,7 @@ import { useContainer } from 'class-validator';
 import * as Sentry from '@sentry/node';
 import '@config/sentry.config';
 
-import { AppModule } from '@src/app.module';
+import { AppModule } from './app.module';
 import { AuthModule } from '@auth/auth.module';
 import { CompanyModule as CompanyModuleV1 } from '@company-v1/company.module';
 import { UserModule as UserModuleV1 } from '@user-v1/user.module';

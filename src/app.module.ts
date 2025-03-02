@@ -2,8 +2,8 @@ import { Module } from '@nestjs/common';
 import { ConfigModule as Config } from '@nestjs/config';
 import 'dotenv/config';
 
-import { V1Module } from '@src/v1/v1.module';
-import { V2Module } from '@src/v2/v2.module';
+import { V1Module } from './v1/v1.module';
+import { V2Module } from './v2/v2.module';
 import { ConfigModule } from '@config/config.module';
 import { DatabaseModule } from '@database/database.module';
 import { appConfig } from '@config/app.config';

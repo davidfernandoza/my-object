@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
 
-import { CompanyController } from '@src/v1/company/controllers/company.controller';
-import { BookingController } from '@src/v1/company/controllers/booking.controller';
+import { CompanyController } from '@company-v1/controllers/company.controller';
+import { BookingController } from '@company-v1/controllers/booking.controller';
 import { UserModule } from '@user-v1/user.module';
-import { CompanyServices } from '@src/v1/company/services/company.services';
-import { BookingServices } from '@src/v1/company/services/booking.services';
+import { CompanyServices } from '@company-v1/services/company.services';
+import { BookingServices } from '@company-v1/services/booking.services';
 
 @Module({
 	imports: [UserModule],

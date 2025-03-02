@@ -73,4 +73,8 @@ export class AuthServices implements IAuthService {
 			throw new UnauthorizedException(error.message);
 		}
 	}
+
+	logout() {
+		console.log('hola');
+	}
 }

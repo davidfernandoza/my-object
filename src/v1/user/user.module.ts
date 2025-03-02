@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { UserService } from '@src/v1/user/services/user.service';
+import { UserService } from '@user-v1/services/user.service';
 import { UserController } from '@user-v1/controllers/user.controller';
 
 @Module({

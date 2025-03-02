@@ -1,7 +1,6 @@
 import {
 	Controller,
 	Get,
-	UseGuards,
 	Param,
 	ParseIntPipe,
 	Post,
@@ -11,14 +10,12 @@ import {
 } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 
-import { ApiKeyGuard } from '@auth/guards/api-key.guard';
-import { ItemServices } from '@src/v1/item/services/item.services';
-import { ItemInterface } from '@src/v1/item/interfaces/item.interface';
+import { ItemServices } from '@item-v1/services/item.services';
+import { ItemInterface } from '@item-v1/interfaces/item.interface';
 import { isPublic } from '@common/decorators/is-public.decorator';
-import { CreateItemDTO } from '@src/v1/item/dtos/item.dto';
+import { CreateItemDTO } from '@item-v1/dtos/item.dto';
 
 @ApiTags('Item')
-@UseGuards(ApiKeyGuard)
 @Controller({ path: 'item', version: '1' })
 export class ItemController {
 	private itemServices: ItemInterface;
