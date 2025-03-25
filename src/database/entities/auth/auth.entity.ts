@@ -52,7 +52,7 @@ export class Auth {
 	@Index()
 	@Column({ type: 'int', nullable: false, select: false })
 	@Exclude()
-	verificationEmailToken: number;
+	verificationEmailToken: string;
 
 	@Column({ type: 'datetime', nullable: true })
 	verificationEmailExpirationToken: Date;

@@ -4,7 +4,7 @@ import { Auth } from '@database/entities/auth/auth.entity';
 import { Request } from 'express';
 
 export interface IAuthService {
-	login(payload: Auth): LoginResponseDTO;
+	login(auth: Auth, remember: boolean): Promise<LoginResponseDTO>;
 	register(payload: RegisterDTO): Promise<RegisterResponseDTO>;
 	validateAuth(email: string, password: string): Promise<Auth> | null;
 	refreshToken(refreshToken: string): Promise<LoginResponseDTO>;

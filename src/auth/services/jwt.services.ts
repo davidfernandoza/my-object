@@ -13,18 +13,18 @@ export class JwtServices {
 		private readonly authTokenRepository: AuthTokenRepository,
 	) {}
 
-	public generateAccessToken(payload: IJwtPayload): { access_token: string } {
+	public generateAccessToken(payload: IJwtPayload): { accessToken: string } {
 		return {
-			access_token: this.jwtService.sign(payload, {
+			accessToken: this.jwtService.sign(payload, {
 				secret: this.configService.getConfig().jwt.accessSecret,
 				expiresIn: this.configService.getConfig().jwt.accessExpiration,
 			}),
 		};
 	}
 
-	public generateRefreshToken(payload: IJwtPayload): { refresh_token: string } {
+	public generateRefreshToken(payload: IJwtPayload): { refreshToken: string } {
 		return {
-			refresh_token: this.jwtService.sign(payload, {
+			refreshToken: this.jwtService.sign(payload, {
 				secret: this.configService.getConfig().jwt.refreshSecret,
 				expiresIn: this.configService.getConfig().jwt.refreshExpiration,
 			}),

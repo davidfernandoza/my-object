@@ -49,8 +49,9 @@ export class AuthController {
 	@Post('login')
 	@HttpCode(HttpStatus.ACCEPTED)
 	async login(@Body() payload: LoginDTO): Promise<LoginResponseDTO> {
-		const auth = await this.authServices.validateAuth(payload.email, payload.password);
-		return this.authServices.login(auth);
+		const { email, password, remember } = payload;
+		const auth = await this.authServices.validateAuth(email, password);
+		return this.authServices.login(auth, remember);
 	}
 
 	@Post('refresh-token')

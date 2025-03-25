@@ -8,12 +8,13 @@ import { AuthController } from '@auth/controllers/auth.controller';
 import { MessagesService } from '@common/services/messages.service';
 import { JwtStrategy } from '@auth/strategies/jwt.strategy';
 import { TwoFactorAuthModule } from '@auth/submodules/2FA/two-factor-auth.module';
+import { VerificationEmailServices } from '@auth/services/verification-email.services';
 
 @Global()
 @Module({
 	imports: [PassportModule, MessagesService, JwtModule, TwoFactorAuthModule],
 	controllers: [AuthController],
-	providers: [AuthServices, JwtServices, JwtStrategy],
+	providers: [AuthServices, JwtServices, JwtStrategy, VerificationEmailServices],
 	exports: [JwtStrategy],
 })
 export class AuthModule {}
