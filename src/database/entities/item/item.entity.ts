@@ -36,34 +36,34 @@ export class Item {
 		onDelete: 'RESTRICT',
 		nullable: false,
 	})
-	@JoinColumn({ name: 'office_id' })
+	@JoinColumn({ name: 'officeId' })
 	office: Office; // Relation
 
 	@ManyToOne(() => User, user => user.items, {
 		onDelete: 'RESTRICT',
 		nullable: false,
 	})
-	@JoinColumn({ name: 'user_id' })
+	@JoinColumn({ name: 'userId' })
 	user: User; // Relation
 
 	@ManyToOne(() => ItemType, itemType => itemType.items, {
 		onDelete: 'RESTRICT',
 		nullable: false,
 	})
-	@JoinColumn({ name: 'item_type_id' })
-	item_type: ItemType; // Relation
+	@JoinColumn({ name: 'itemTypeId' })
+	itemType: ItemType; // Relation
 
 	@OneToMany(() => History, history => history.item)
 	histories: History[]; // Relation
 
 	@Index()
 	@CreateDateColumn({ type: 'timestamp' })
-	created_at: Date;
+	createdAt: Date;
 
 	@UpdateDateColumn({ type: 'timestamp' })
-	updated_at: Date;
+	updatedAt: Date;
 
 	@Index()
 	@DeleteDateColumn({ type: 'timestamp' })
-	deleted_at: Date;
+	deletedAt: Date;
 }

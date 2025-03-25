@@ -30,30 +30,30 @@ export class History {
 
 	@Index()
 	@Column({ type: 'datetime' })
-	last_date: Date;
+	lastDate: Date;
 
 	@ManyToOne(() => Item, item => item.histories, {
 		onDelete: 'RESTRICT',
 		nullable: false,
 	})
-	@JoinColumn({ name: 'item_id' })
+	@JoinColumn({ name: 'itemId' })
 	item: Item; // Relation
 
 	@ManyToOne(() => Employeer, employeer => employeer.histories, {
 		onDelete: 'RESTRICT',
 		nullable: false,
 	})
-	@JoinColumn({ name: 'employeer_id' })
+	@JoinColumn({ name: 'employeerId' })
 	employeer: Employeer; // Relation
 
 	@Index()
 	@CreateDateColumn({ type: 'timestamp' })
-	created_at: Date;
+	createdAt: Date;
 
 	@UpdateDateColumn({ type: 'timestamp' })
-	updated_at: Date;
+	updatedAt: Date;
 
 	@Index()
 	@DeleteDateColumn({ type: 'timestamp' })
-	deleted_at: Date;
+	deletedAt: Date;
 }

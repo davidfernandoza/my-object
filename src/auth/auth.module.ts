@@ -7,10 +7,11 @@ import { JwtServices } from '@auth/services/jwt.services';
 import { AuthController } from '@auth/controllers/auth.controller';
 import { MessagesService } from '@common/services/messages.service';
 import { JwtStrategy } from '@auth/strategies/jwt.strategy';
+import { TwoFactorAuthModule } from '@auth/submodules/2FA/two-factor-auth.module';
 
 @Global()
 @Module({
-	imports: [PassportModule, MessagesService, JwtModule],
+	imports: [PassportModule, MessagesService, JwtModule, TwoFactorAuthModule],
 	controllers: [AuthController],
 	providers: [AuthServices, JwtServices, JwtStrategy],
 	exports: [JwtStrategy],

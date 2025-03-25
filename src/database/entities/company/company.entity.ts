@@ -27,12 +27,12 @@ export class Company {
 
 	@Index()
 	@CreateDateColumn({ type: 'timestamp' })
-	created_at: Date;
+	createdAt: Date;
 
 	@UpdateDateColumn({ type: 'timestamp' })
-	updated_at: Date;
+	updatedAt: Date;
 
 	@Index()
 	@DeleteDateColumn({ type: 'timestamp' })
-	deleted_at: Date;
+	deletedAt: Date;
 }

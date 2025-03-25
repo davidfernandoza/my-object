@@ -14,6 +14,6 @@ export class UserRepository extends Repository<User> {
 	}
 
 	async findByIdentificationNumber(identification: string): Promise<User[]> {
-		return this.find({ where: { identification_number: identification } });
+		return this.find({ where: { identificationNumber: identification } });
 	}
 }

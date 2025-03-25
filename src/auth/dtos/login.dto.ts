@@ -13,6 +13,6 @@ export class LoginDTO {
 }
 
 export class LoginResponseDTO {
-	readonly access_token: string;
-	readonly refresh_token: string;
+	readonly accessToken: string;
+	readonly refreshToken: string;
 }

@@ -27,19 +27,19 @@ export class Office {
 	address: string;
 
 	@Column({ type: 'varchar', collation: 'utf8mb4_spanish2_ci', length: 200, nullable: true })
-	map_coordinates: string;
+	mapCoordinates: string;
 
 	@Column({ type: 'varchar', collation: 'utf8mb4_spanish2_ci', length: 20, unique: true })
-	phone_1: string;
+	phone1: string;
 
 	@Column({ type: 'varchar', collation: 'utf8mb4_spanish2_ci', length: 20, nullable: true })
-	phone_2: string;
+	phone2: string;
 
 	@Column({ type: 'varchar', collation: 'utf8mb4_spanish2_ci', length: 120, unique: true })
-	email_1: string;
+	email1: string;
 
 	@Column({ type: 'varchar', collation: 'utf8mb4_spanish2_ci', length: 120, nullable: true })
-	email_2: string;
+	email2: string;
 
 	@OneToMany(() => Booking, booking => booking.office)
 	bookings: Booking[]; // Relation
@@ -61,17 +61,17 @@ export class Office {
 		onDelete: 'RESTRICT',
 		nullable: false,
 	})
-	@JoinColumn({ name: 'company_id' })
+	@JoinColumn({ name: 'companyId' })
 	company: Company; // Relation
 
 	@Index()
 	@CreateDateColumn({ type: 'timestamp' })
-	created_at: Date;
+	createdAt: Date;
 
 	@UpdateDateColumn({ type: 'timestamp' })
-	updated_at: Date;
+	updatedAt: Date;
 
 	@Index()
 	@DeleteDateColumn({ type: 'timestamp' })
-	deleted_at: Date;
+	deletedAt: Date;
 }

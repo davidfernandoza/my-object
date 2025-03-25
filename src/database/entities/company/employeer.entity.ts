@@ -32,14 +32,14 @@ export class Employeer {
 		onDelete: 'RESTRICT',
 		nullable: false,
 	})
-	@JoinColumn({ name: 'office_id' })
+	@JoinColumn({ name: 'officeId' })
 	office: Office; // Relation
 
 	@ManyToOne(() => User, user => user.employeers, {
 		onDelete: 'RESTRICT',
 		nullable: false,
 	})
-	@JoinColumn({ name: 'user_id' })
+	@JoinColumn({ name: 'userId' })
 	user: User; // Relation
 
 	@OneToMany(() => History, history => history.employeer)
@@ -47,12 +47,12 @@ export class Employeer {
 
 	@Index()
 	@CreateDateColumn({ type: 'timestamp' })
-	created_at: Date;
+	createdAt: Date;
 
 	@UpdateDateColumn({ type: 'timestamp' })
-	updated_at: Date;
+	updatedAt: Date;
 
 	@Index()
 	@DeleteDateColumn({ type: 'timestamp' })
-	deleted_at: Date;
+	deletedAt: Date;
 }

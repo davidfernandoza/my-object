@@ -4,7 +4,6 @@ import {
 	Entity,
 	CreateDateColumn,
 	UpdateDateColumn,
-	OneToOne,
 	ManyToOne,
 	OneToMany,
 	DeleteDateColumn,
@@ -29,34 +28,34 @@ export class User {
 	names: string;
 
 	@Column({ type: 'varchar', collation: 'utf8mb4_spanish2_ci', length: 120 })
-	last_names: string;
+	lastNames: string;
 
 	@Index()
 	@Column({ type: 'varchar', collation: 'utf8mb4_spanish2_ci', length: 25 })
-	identification_number: string;
+	identificationNumber: string;
 
 	@Column({ type: 'varchar', collation: 'utf8mb4_spanish2_ci', length: 20, nullable: true })
 	phone: string;
 
-	@OneToOne(() => Auth, auth => auth.user, { nullable: false }) // one to one relation
-	@JoinColumn({ name: 'auth_id' })
-	auth: Auth;
+	/* -----------------------------------------
+	 * Relations
+	 */
 
-	@Column({ unique: true, name: 'auth_id' }) // Clave foránea única
-	auth_id: number;
+	@OneToMany(() => Auth, auth => auth.user, { nullable: false }) // one to one relation
+	auths: Auth;
 
 	@ManyToOne(() => City, city => city.users, {
 		onDelete: 'RESTRICT',
 		nullable: false,
 	})
-	@JoinColumn({ name: 'city_id' })
+	@JoinColumn({ name: 'cityId' })
 	city: City; // Relation
 
 	@ManyToOne(() => IdentificationType, identificationType => identificationType.users, {
 		onDelete: 'RESTRICT',
 		nullable: false,
 	})
-	@JoinColumn({ name: 'identification_type_id' })
+	@JoinColumn({ name: 'identificationTypeId' })
 	identificationType: IdentificationType; // Relation
 
 	@OneToMany(() => Booking, booking => booking.user)
@@ -70,12 +69,12 @@ export class User {
 
 	@Index()
 	@CreateDateColumn({ type: 'timestamp' })
-	created_at: Date;
+	createdAt: Date;
 
 	@UpdateDateColumn({ type: 'timestamp' })
-	updated_at: Date;
+	updatedAt: Date;
 
 	@Index()
 	@DeleteDateColumn({ type: 'timestamp' })
-	deleted_at: Date;
+	deletedAt: Date;
 }

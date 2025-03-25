@@ -2,14 +2,15 @@ import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@config/app.config';
 import { IJwtPayload } from '@auth/interfaces/jwt-service.interface';
-import { JWTBlacklistRepository } from '@database/repositories/auth/jwt-blacklist.repository';
+import { AuthTokenRepository } from '@database/repositories/auth/auth-token.repository';
+import { TokenType } from '@database/enums/auth/auth-token.enum';
 
 @Injectable()
 export class JwtServices {
 	constructor(
 		private readonly jwtService: JwtService,
 		private readonly configService: ConfigService,
-		private readonly jwtBlacklistRepository: JWTBlacklistRepository,
+		private readonly authTokenRepository: AuthTokenRepository,
 	) {}
 
 	public generateAccessToken(payload: IJwtPayload): { access_token: string } {
@@ -42,7 +43,10 @@ export class JwtServices {
 	}
 
 	public async inBlacklist(token: string) {
-		const blacklistedToken = await this.jwtBlacklistRepository.getToken(token);
+		const blacklistedToken = await this.authTokenRepository.getToken(
+			token,
+			TokenType.JWTBlackAccess,
+		);
 		return !!blacklistedToken;
 	}
 }

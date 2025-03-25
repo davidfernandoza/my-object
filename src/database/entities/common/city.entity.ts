@@ -27,7 +27,7 @@ export class City {
 		onDelete: 'RESTRICT',
 		nullable: false,
 	})
-	@JoinColumn({ name: 'department_id' })
+	@JoinColumn({ name: 'departmentId' })
 	department: Department; // Relation
 
 	@OneToMany(() => User, user => user.city)
@@ -38,12 +38,12 @@ export class City {
 
 	@Index()
 	@CreateDateColumn({ type: 'timestamp' })
-	created_at: Date;
+	createdAt: Date;
 
 	@UpdateDateColumn({ type: 'timestamp' })
-	updated_at: Date;
+	updatedAt: Date;
 
 	@Index()
 	@DeleteDateColumn({ type: 'timestamp' })
-	deleted_at: Date;
+	deletedAt: Date;
 }

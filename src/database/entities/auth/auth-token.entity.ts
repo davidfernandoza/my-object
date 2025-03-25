@@ -13,30 +13,53 @@ import { Exclude } from 'class-transformer';
 
 import { Auth } from '@database/entities/auth/auth.entity';
 
-@Entity('jwt_blacklist') // Table Name
-export class JWTBlacklist {
+@Entity('authTokens') // Table Name
+export class AuthToken {
 	@PrimaryGeneratedColumn()
 	id: number;
 
 	@Column({ unique: true, type: 'varchar', collation: 'utf8mb4_spanish2_ci', length: 512 })
+	@Index()
 	token: string;
 
-	@ManyToOne(() => Auth, auth => auth.tokensInBlackList, {
+	@Column({
+		type: 'enum',
+		enum: [
+			'JWTBlackAccess',
+			'JWTRefresh',
+			'OauthRefresh',
+			'OauthAccess',
+			'2FATemporal',
+			'VerificationEmailTemporal',
+		],
+		collation: 'utf8mb4_spanish2_ci',
+	})
+	@Index()
+	type: string;
+
+	@Column({ type: 'datetime', nullable: true })
+	expiration: Date;
+
+	/* ------------------------------------------------
+	 * Relations
+	 */
+
+	@ManyToOne(() => Auth, auth => auth.authTokens, {
 		onDelete: 'RESTRICT',
 		nullable: false,
 	})
-	@JoinColumn({ name: 'auth_id' })
+	@JoinColumn({ name: 'authId' })
 	auth: Auth; // Relation
 
 	@Index()
 	@CreateDateColumn({ type: 'timestamp' })
-	created_at: Date;
+	createdAt: Date;
 
 	@UpdateDateColumn({ type: 'timestamp' })
-	updated_at: Date;
+	updatedAt: Date;
 
 	@Index()
 	@DeleteDateColumn({ type: 'timestamp', select: false })
 	@Exclude()
-	deleted_at: Date;
+	deletedAt: Date;
 }

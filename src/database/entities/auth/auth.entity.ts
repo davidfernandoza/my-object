@@ -4,18 +4,19 @@ import {
 	Entity,
 	CreateDateColumn,
 	UpdateDateColumn,
-	OneToOne,
 	OneToMany,
 	DeleteDateColumn,
 	Index,
 	BeforeInsert,
 	BeforeUpdate,
+	ManyToOne,
+	JoinColumn,
 } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { Exclude } from 'class-transformer';
 
 import { User } from '@database/entities/user/user.entity';
-import { JWTBlacklist } from '@database/entities/auth/jwt-blacklist.entity';
+import { AuthToken } from '@database/entities/auth/auth-token.entity';
 
 @Entity('auth') // Table Name
 export class Auth {
@@ -29,38 +30,71 @@ export class Auth {
 	@Exclude()
 	password: string;
 
-	@Column({ unique: true, type: 'varchar', collation: 'utf8mb4_spanish2_ci', length: 15 })
-	wathsapp: string;
+	@Column({ type: 'datetime', nullable: false })
+	passwordExpirationDate: Date;
+
+	@Column({ type: 'varchar', nullable: true, collation: 'utf8mb4_spanish2_ci' })
+	passwordResetToken: string;
+
+	@Column({ type: 'datetime', nullable: true })
+	passwordResetExpiration: Date;
+
+	@Index()
+	@Column({ type: 'int', nullable: false, default: 0 })
+	loginAttempts: number;
+
+	@Column({ type: 'datetime', nullable: true })
+	loginAttemptsExpiration: Date;
+
+	@Column({ type: 'int', nullable: false, default: 0 })
+	loginAttemptsCicles: number;
 
 	@Index()
 	@Column({ type: 'int', nullable: false, select: false })
 	@Exclude()
-	code_verification: number;
+	verificationEmailToken: number;
 
 	@Column({ type: 'datetime', nullable: true })
-	verification_date: Date;
+	verificationEmailExpirationToken: Date;
 
-	@Column({ type: 'varchar', nullable: true })
-	@Exclude()
-	refresh_token: string;
+	@Column({ type: 'datetime', nullable: true })
+	verificationEmailDate: Date;
 
-	@OneToOne(() => User, user => user.auth) // one to one relation inverse
+	@Column({ type: 'boolean', nullable: false, default: false })
+	with2FA: boolean;
+
+	@Index()
+	@Column({ type: 'varchar', nullable: true, collation: 'utf8mb4_spanish2_ci' })
+	secret2FA: string;
+
+	@Column({ type: 'boolean', nullable: false, default: true })
+	isActive: boolean;
+
+	/*----------------------------------------
+	 * Relations
+	 */
+
+	@ManyToOne(() => User, user => user.auths, {
+		onDelete: 'RESTRICT',
+		nullable: false,
+	})
+	@JoinColumn({ name: 'userId' })
 	user: User; // Relation
 
-	@OneToMany(() => JWTBlacklist, jwtBlacklist => jwtBlacklist.auth)
-	tokensInBlackList: JWTBlacklist[]; // Relation
+	@OneToMany(() => AuthToken, authToke => authToke.auth)
+	authTokens: AuthToken[]; // Relation
 
 	@Index()
 	@CreateDateColumn({ type: 'timestamp' })
-	created_at: Date;
+	createdAt: Date;
 
 	@UpdateDateColumn({ type: 'timestamp' })
-	updated_at: Date;
+	updatedAt: Date;
 
 	@Index()
 	@DeleteDateColumn({ type: 'timestamp', select: false })
 	@Exclude()
-	deleted_at: Date;
+	deletedAt: Date;
 
 	// --------------------------------------------
 

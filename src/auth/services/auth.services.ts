@@ -10,7 +10,7 @@ import { MailService } from '@common/services/mail.service';
 import { LoginResponseDTO } from '@auth/dtos/login.dto';
 import { JwtServices } from '@auth/services/jwt.services';
 import { IAuthService } from '@auth/interfaces/auth-service.interface';
-import { JWTBlacklistRepository } from '../../database/repositories/auth/jwt-blacklist.repository';
+import { JWTBlacklistRepository } from '@database/repositories/auth/auth-token.repository';
 
 @Injectable()
 export class AuthServices implements IAuthService {
