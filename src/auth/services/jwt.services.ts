@@ -45,7 +45,7 @@ export class JwtServices {
 	public async inBlacklist(token: string) {
 		const blacklistedToken = await this.authTokenRepository.getToken(
 			token,
-			TokenType.JWTBlackAccess,
+			TokenType.JWTBlackAccessToken,
 		);
 		return !!blacklistedToken;
 	}

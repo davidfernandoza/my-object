@@ -19,20 +19,22 @@ export class AuthToken {
 	id: number;
 
 	@Column({ unique: true, type: 'varchar', collation: 'utf8mb4_spanish2_ci', length: 512 })
-	@Index()
 	token: string;
 
 	@Column({
 		type: 'enum',
 		enum: [
-			'JWTBlackAccess',
-			'JWTRefresh',
-			'OauthRefresh',
-			'OauthAccess',
-			'2FATemporal',
-			'VerificationEmailTemporal',
+			'JWT[BlackAccessToken]',
+			'JWT[RefreshToken]',
+			'Oauth[RefreshToken]',
+			'Oauth[AccessToken]',
+			'2FA[APiKey]',
+			'2FA[Token]',
+			'VerificationEmail[ApiKey]',
+			'VerificationEmail[Token]',
+			'passwordReset[ApiKey]',
+			'passwordReset[Token]',
 		],
-		collation: 'utf8mb4_spanish2_ci',
 	})
 	@Index()
 	type: string;

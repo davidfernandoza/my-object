@@ -70,10 +70,4 @@ export class AuthController {
 		if (!accessToken) throw new UnauthorizedException();
 		return await this.authServices.logout(auth.id, accessToken);
 	}
-
-	// @Post('password/forgot')
-	// @Post('password/validate-forgot-code')
-	// @Post('password/change')
-	// @Post('2fa/validate-code')
-	// @Post('2fa/activate')
 }

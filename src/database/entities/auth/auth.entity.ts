@@ -33,12 +33,6 @@ export class Auth {
 	@Column({ type: 'datetime', nullable: false })
 	passwordExpirationDate: Date;
 
-	@Column({ type: 'varchar', nullable: true, collation: 'utf8mb4_spanish2_ci' })
-	passwordResetToken: string;
-
-	@Column({ type: 'datetime', nullable: true })
-	passwordResetExpiration: Date;
-
 	@Index()
 	@Column({ type: 'int', nullable: false, default: 0 })
 	loginAttempts: number;
@@ -48,14 +42,6 @@ export class Auth {
 
 	@Column({ type: 'int', nullable: false, default: 0 })
 	loginAttemptsCicles: number;
-
-	@Index()
-	@Column({ type: 'int', nullable: false, select: false })
-	@Exclude()
-	verificationEmailToken: string;
-
-	@Column({ type: 'datetime', nullable: true })
-	verificationEmailExpirationToken: Date;
 
 	@Column({ type: 'datetime', nullable: true })
 	verificationEmailDate: Date;
@@ -76,7 +62,7 @@ export class Auth {
 
 	@ManyToOne(() => User, user => user.auths, {
 		onDelete: 'RESTRICT',
-		nullable: false,
+		nullable: true,
 	})
 	@JoinColumn({ name: 'userId' })
 	user: User; // Relation

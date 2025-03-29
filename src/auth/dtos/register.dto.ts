@@ -1,22 +1,10 @@
-import {
-	IsString,
-	IsNotEmpty,
-	IsEmail,
-	MinLength,
-	MaxLength,
-	// IsOptional,
-} from 'class-validator';
+import { IsString, IsNotEmpty, IsEmail, MinLength, MaxLength } from 'class-validator';
 
-// import { ApiProperty, ApiHideProperty } from '@nestjs/swagger';
 import { ApiProperty } from '@nestjs/swagger';
 import { IsUnique } from '@common/decorators/is-unique.decorador';
 import { Auth } from '@database/entities/auth/auth.entity';
 
 export class RegisterDTO {
-	// @ApiHideProperty()
-	// @IsOptional()
-	// id: number;
-
 	@IsEmail()
 	@IsNotEmpty()
 	@IsString()
@@ -34,6 +22,7 @@ export class RegisterDTO {
 }
 
 export class RegisterResponseDTO {
-	auth: Auth;
-	tokens: object;
+	apiKey: string;
+	expiration: string;
+	withVerificationEmail: boolean;
 }
