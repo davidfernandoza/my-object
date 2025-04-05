@@ -17,6 +17,11 @@ export class LoginDTO {
 }
 
 export class LoginResponseDTO {
-	readonly accessToken: string;
-	readonly refreshToken: string;
+	readonly accessToken: string | null;
+	readonly refreshToken: string | null;
+	readonly apiKey: string | null;
+	readonly apiKeyExpiration: string | null;
+	readonly withVerificationEmail: boolean;
+	readonly with2FA: boolean;
+	readonly remember: boolean;
 }

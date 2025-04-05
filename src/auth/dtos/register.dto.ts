@@ -3,6 +3,7 @@ import { IsString, IsNotEmpty, IsEmail, MinLength, MaxLength } from 'class-valid
 import { ApiProperty } from '@nestjs/swagger';
 import { IsUnique } from '@common/decorators/is-unique.decorador';
 import { Auth } from '@database/entities/auth/auth.entity';
+import { LoginResponseDTO } from '@auth/dtos/login.dto';
 
 export class RegisterDTO {
 	@IsEmail()
@@ -21,8 +22,4 @@ export class RegisterDTO {
 	password: string;
 }
 
-export class RegisterResponseDTO {
-	apiKey: string;
-	expiration: string;
-	withVerificationEmail: boolean;
-}
+export class RegisterResponseDTO extends LoginResponseDTO {}

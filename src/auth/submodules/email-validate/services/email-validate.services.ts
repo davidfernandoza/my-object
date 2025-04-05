@@ -3,6 +3,7 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import moment from 'moment';
 import * as bcrypt from 'bcrypt';
 import crypto from 'crypto';
+import { In } from 'typeorm';
 // import { plainToInstance } from 'class-transformer';
 
 import { TokenType } from '@database/enums/auth/auth-token.enum';
@@ -38,10 +39,11 @@ export class EmailValidateServices implements IEmailValidateServices {
 
 	async sendVerificationCodeToEmail(auth: Auth): Promise<{ apiKey: string; expiration: string }> {
 		const code = this.helperService.generateCode(6);
-		const view = this.templateService.compile('verify.email', { code });
+		const templateView = this.templateService.compile('verify.email', { code });
 		const verificationEmailToken = await this.generateToken(code);
 		const expiration = moment().add(this.expirationMinutes, 'minute').format('YYYY-MM-DD HH:mm:ss');
 		const apiKey = crypto.randomBytes(32).toString('hex');
+		await this.deleteEmailVerificationTokens(auth);
 		await Promise.all([
 			this.authTokenRepository.addToken(
 				auth,
@@ -59,7 +61,7 @@ export class EmailValidateServices implements IEmailValidateServices {
 		this.mailService.sendEmail({
 			to: [auth.email],
 			subject: 'Creación de cuenta en My Object',
-			message: view,
+			message: templateView,
 			type: 'html',
 			engine: 'nodemailer',
 		});
@@ -75,16 +77,23 @@ export class EmailValidateServices implements IEmailValidateServices {
 		if (this.helperService.isExpired(String(authToken.expiration))) {
 			throw new UnauthorizedException('API key expired');
 		}
-		const isValid = await bcrypt.compare(code, authToken.token);
+
+		const isValid = await bcrypt.compare(code, authToken.auth.authTokens[0].token);
 		if (!isValid) {
 			throw new UnauthorizedException('Invalid code');
 		}
 		const auth = authToken.auth;
-		auth.verificationEmailDate = moment().toDate();
-		await this.authRepository.save(auth);
+		await this.authRepository.update(auth.id, {
+			verificationEmailDate: moment().toDate(),
+		});
+		await this.deleteEmailVerificationTokens(auth);
 		return auth;
 	}
-	async resentCode(apikey: string): Promise<ResentCodeResponseDTO> {
+
+	async resentCode(
+		apikey: string,
+		remember: boolean | null = null,
+	): Promise<ResentCodeResponseDTO> {
 		const authToken = await this.authTokenRepository.getAuthByApiKey(apikey);
 		if (!authToken) {
 			throw new UnauthorizedException('Invalid API key');
@@ -92,9 +101,20 @@ export class EmailValidateServices implements IEmailValidateServices {
 		const auth = authToken.auth;
 		const newAuthToken = await this.sendVerificationCodeToEmail(auth);
 		return {
+			accessToken: null,
+			refreshToken: null,
 			apiKey: newAuthToken.apiKey,
-			expiration: newAuthToken.expiration,
+			apiKeyExpiration: newAuthToken.expiration,
 			withVerificationEmail: false,
+			with2FA: false,
+			remember,
 		};
+	}
+
+	async deleteEmailVerificationTokens(auth: Auth): Promise<void> {
+		await this.authTokenRepository.delete({
+			auth: auth,
+			type: In([TokenType.VerificationEmailToken, TokenType.VerificationEmailApiKey]),
+		});
 	}
 }

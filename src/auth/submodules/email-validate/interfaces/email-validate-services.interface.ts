@@ -6,5 +6,6 @@ export interface IEmailValidateServices {
 	generateToken(code: string): Promise<string>;
 	sendVerificationCodeToEmail(auth: Auth): Promise<{ apiKey: string; expiration: string }>;
 	validateAccount(apiKey: string, code: string): Promise<Auth>;
-	resentCode(apiKey: string): Promise<ResentCodeResponseDTO>;
+	resentCode(apiKey: string, remember?: boolean): Promise<ResentCodeResponseDTO>;
+	deleteEmailVerificationTokens(auth: Auth): Promise<void>;
 }

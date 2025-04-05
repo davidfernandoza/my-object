@@ -24,7 +24,15 @@ export class AuthServices implements IAuthService {
 			const auth = await this.authRepository.register(payload.email, payload.password);
 			const { expiration, apiKey } =
 				await this.emailValidateServices.sendVerificationCodeToEmail(auth);
-			return { expiration, apiKey, withVerificationEmail: false };
+			return {
+				accessToken: null,
+				refreshToken: null,
+				apiKey,
+				apiKeyExpiration: expiration,
+				withVerificationEmail: false,
+				with2FA: false,
+				remember: false,
+			};
 		} catch (error) {
 			console.error(error, '****************');
 			throw new InternalServerErrorException(error.message);
@@ -47,7 +55,15 @@ export class AuthServices implements IAuthService {
 			refreshToken = this.jwtServices.generateRefreshToken(payload);
 			await this.authTokenRepository.addToken(auth, refreshToken, TokenType.JWTRefreshToken);
 		}
-		return { ...accessToken, ...refreshToken };
+		return {
+			...accessToken,
+			...refreshToken,
+			apiKey: null,
+			apiKeyExpiration: null,
+			withVerificationEmail: false,
+			with2FA: false,
+			remember,
+		};
 	}
 
 	async refreshToken(refreshToken: string): Promise<LoginResponseDTO> {

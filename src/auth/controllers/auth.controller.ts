@@ -63,11 +63,11 @@ export class AuthController {
 	@Post('logout')
 	@UseGuards(StrategyAuthGuard)
 	@HttpCode(HttpStatus.NO_CONTENT)
-	async logout(@Req() request: IAuthRequest) {
+	async logout(@Req() request: IAuthRequest): Promise<void> {
 		const authHeader = request.headers['authorization'];
 		const accessToken = authHeader && authHeader.split(' ')[1];
 		const auth = request.auth;
 		if (!accessToken) throw new UnauthorizedException();
-		return await this.authServices.logout(auth.id, accessToken);
+		await this.authServices.logout(auth.id, accessToken);
 	}
 }

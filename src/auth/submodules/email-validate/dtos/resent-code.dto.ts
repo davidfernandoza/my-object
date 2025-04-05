@@ -1,6 +1,6 @@
-import { IsString, IsNotEmpty, MaxLength } from 'class-validator';
+import { IsString, IsNotEmpty, MaxLength, IsBoolean, IsOptional } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
-import { RegisterResponseDTO } from '@auth/dtos/register.dto';
+import { LoginResponseDTO } from '@auth/dtos/login.dto';
 
 export class ResentCodeDTO {
 	@IsNotEmpty()
@@ -11,6 +11,10 @@ export class ResentCodeDTO {
 		example: '0f4c95bdf04c320253620a72ceff...',
 	})
 	apiKey: string;
+
+	@IsBoolean()
+	@IsOptional()
+	readonly remember: boolean;
 }
 
-export class ResentCodeResponseDTO extends RegisterResponseDTO {}
+export class ResentCodeResponseDTO extends LoginResponseDTO {}
