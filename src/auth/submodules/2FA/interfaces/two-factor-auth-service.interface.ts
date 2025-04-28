@@ -1,4 +1,8 @@
 export interface ITwoFactorAuthService {
-	changeActivation(body: any): Promise<void>;
-	validateCode(body: any): Promise<boolean>;
+	changeActivation(
+		id: number,
+		with2FA: boolean,
+	): Promise<{ qrCode: string | null; status: boolean }>;
+	validateCode(code: string, idAuth: number): Promise<boolean>;
+	activate2FA(idAuth: number): Promise<void>;
 }

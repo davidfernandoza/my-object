@@ -12,5 +12,5 @@ export class RefreshTokenDTO {
 	@IsString()
 	@IsNotEmpty()
 	@MinLength(10)
-	readonly refresh_token: string;
+	readonly refreshToken: string;
 }

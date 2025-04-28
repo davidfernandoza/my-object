@@ -1,5 +1,5 @@
+import passport from 'passport';
 import { Injectable, CanActivate, ExecutionContext, UnauthorizedException } from '@nestjs/common';
-import * as passport from 'passport';
 
 @Injectable()
 export class StrategyAuthGuard implements CanActivate {

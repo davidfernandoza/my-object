@@ -41,6 +41,10 @@ export const appConfig = registerAs('config', () => ({
 		refreshSecret: process.env.JWT_REFRESH_SECRET,
 		refreshExpiration: process.env.JWT_REFRESH_EXPIRATION,
 	},
+	twoFactorAuth: {
+		encryptionSalt: process.env.TWO_FACTOR_AUTH_ENCRYPTION_SALT,
+		encryptionIvLength: process.env.TWO_FACTOR_AUTH_ENCRYPTION_IV_LENGTH,
+	},
 	apiKey: process.env.API_KEY,
 }));
 

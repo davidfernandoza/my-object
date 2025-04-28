@@ -26,4 +26,6 @@ export const appConfigSchema = joi.object({
 	JWT_ACCESS_EXPIRATION: joi.string().max(2).required(),
 	JWT_REFRESH_SECRET: joi.string().required(),
 	JWT_REFRESH_EXPIRATION: joi.string().max(2).required(),
+	TWO_FACTOR_AUTH_ENCRYPTION_SALT: joi.string().required(),
+	TWO_FACTOR_AUTH_ENCRYPTION_IV_LENGTH: joi.number().required(),
 });

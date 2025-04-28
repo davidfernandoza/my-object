@@ -9,6 +9,7 @@ import { IAuthService } from '@auth/interfaces/auth-service.interface';
 import { AuthTokenRepository } from '@database/repositories/auth/auth-token.repository';
 import { EmailValidateServices } from '@auth/submodules/email-validate/services/email-validate.services';
 import { TokenType } from '@database/enums/auth/auth-token.enum';
+import { AuthToken } from '@database/entities/auth/auth-token.entity';
 
 @Injectable()
 export class AuthServices implements IAuthService {
@@ -19,9 +20,9 @@ export class AuthServices implements IAuthService {
 		private readonly emailValidateServices: EmailValidateServices,
 	) {}
 
-	async register(payload: RegisterDTO): Promise<RegisterResponseDTO> {
+	async register(body: RegisterDTO): Promise<RegisterResponseDTO> {
 		try {
-			const auth = await this.authRepository.register(payload.email, payload.password);
+			const auth = await this.authRepository.register(body.email, body.password);
 			const { expiration, apiKey } =
 				await this.emailValidateServices.sendVerificationCodeToEmail(auth);
 			return {
@@ -48,12 +49,16 @@ export class AuthServices implements IAuthService {
 	}
 
 	public async login(auth: Auth, remember: boolean): Promise<LoginResponseDTO> {
-		const payload = { id: auth.id };
-		const accessToken = this.jwtServices.generateAccessToken(payload);
+		const body = { id: auth.id };
+		const accessToken = this.jwtServices.generateAccessToken(body);
 		let refreshToken = null;
 		if (remember) {
-			refreshToken = this.jwtServices.generateRefreshToken(payload);
-			await this.authTokenRepository.addToken(auth, refreshToken, TokenType.JWTRefreshToken);
+			refreshToken = this.jwtServices.generateRefreshToken(body);
+			await this.authTokenRepository.addToken(
+				auth,
+				refreshToken.refreshToken,
+				TokenType.JWTRefreshToken,
+			);
 		}
 		return {
 			...accessToken,
@@ -68,11 +73,11 @@ export class AuthServices implements IAuthService {
 
 	async refreshToken(refreshToken: string): Promise<LoginResponseDTO> {
 		try {
-			const payload = this.jwtServices.validateRefreshToken(refreshToken);
+			const body = this.jwtServices.validateRefreshToken(refreshToken);
 			const auth = await this.authRepository.findOne({
 				relations: { authTokens: true },
 				where: {
-					id: payload.authId,
+					id: body.authId,
 					authTokens: { token: refreshToken, type: TokenType.JWTRefreshToken },
 				},
 			});
@@ -85,10 +90,17 @@ export class AuthServices implements IAuthService {
 		}
 	}
 
-	async logout(id: number, token: string): Promise<void> {
-		const auth = await this.authRepository.getOneById(id);
+	public async getAuthByApiKey(apiKey: string): Promise<AuthToken> {
+		return await this.authTokenRepository.getAuthByApiKey(apiKey);
+	}
+
+	async logout(idAuth: number, token: string): Promise<void> {
+		const auth = await this.authRepository.getOneById(idAuth);
 		if (!auth) throw new UnauthorizedException();
 		await this.authTokenRepository.addToken(auth, token, TokenType.JWTBlackAccessToken);
-		// await this.authRepository.update({ id }, { refreshToken: null });
+		await this.authTokenRepository.delete({
+			auth: { id: idAuth },
+			type: TokenType.JWTRefreshToken,
+		});
 	}
 }

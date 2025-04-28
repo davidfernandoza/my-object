@@ -57,7 +57,7 @@ export class AuthController {
 	@Post('refresh-token')
 	@HttpCode(HttpStatus.ACCEPTED)
 	async refreshToken(@Body() payload: RefreshTokenDTO): Promise<LoginResponseDTO> {
-		return await this.authServices.refreshToken(payload.refresh_token);
+		return await this.authServices.refreshToken(payload.refreshToken);
 	}
 
 	@Post('logout')
