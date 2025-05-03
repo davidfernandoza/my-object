@@ -17,8 +17,9 @@ import { StrategyAuthGuard } from '@auth/guards/strategy-auth.guard';
 import { ChangeActivationDTO } from '@auth/submodules/2FA/dtos/change-activation.dto';
 import { IAuthRequest, IAuthService } from '@auth/interfaces/auth-service.interface';
 import { ValidateCodeDTO } from '@auth/submodules/2FA/dtos/validate-code.dto';
-import { AuthServices } from '@auth/services/auth.services';
+import { AuthServices } from '@auth/services/auth.service';
 import { ValidateActivationDTO } from '@auth/submodules/2FA/dtos/validate-activation.dto';
+import { TokenType } from '@database/enums/auth/auth-token.enum';
 
 @ApiTags('Auth/2FA')
 @Controller('auth/2fa')
@@ -66,17 +67,16 @@ export class TwoFactorAuthController {
 
 	@Post('validate-code')
 	@HttpCode(HttpStatus.ACCEPTED)
-	@UseGuards(StrategyAuthGuard)
 	async validateCode(@Req() request: IAuthRequest, @Body() body: ValidateCodeDTO) {
 		const { apiKey, code, remember } = body;
-		const authToken = await this.authServices.getAuthByApiKey(apiKey);
-		if (!authToken) {
-			throw new UnauthorizedException('Invalid API key');
-		}
-		if (!(await this.twoFactorAuthServices.validateCode(code, request.auth.id))) {
+		const authToken = await this.authServices.getAuthByApiKey(apiKey, TokenType.TwoFAApiKey);
+		if (!authToken) throw new UnauthorizedException('Invalid API key');
+
+		const auth = authToken.auth;
+
+		if (!(await this.twoFactorAuthServices.validateCode(code, auth.id))) {
 			throw new BadRequestException('Invalid code');
 		}
-		const auth = authToken.auth;
-		return await this.authServices.login(auth, remember);
+		return await this.authServices.login(auth, remember, null);
 	}
 }

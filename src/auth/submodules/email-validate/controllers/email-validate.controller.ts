@@ -1,9 +1,9 @@
 import { Controller, Post, HttpCode, HttpStatus, Body } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { IEmailValidateServices } from '@auth/submodules/email-validate/interfaces/email-validate-services.interface';
-import { EmailValidateServices } from '@auth/submodules/email-validate/services/email-validate.services';
+import { EmailValidateServices } from '@auth/submodules/email-validate/services/email-validate.service';
 import { ValidateCodeDTO } from '@auth/submodules/email-validate/dtos/validate-code.dto';
-import { AuthServices } from '@auth/services/auth.services';
+import { AuthServices } from '@auth/services/auth.service';
 import { IAuthService } from '@auth/interfaces/auth-service.interface';
 import {
 	ResentCodeDTO,
@@ -32,7 +32,7 @@ export class EmailValidateController {
 	@HttpCode(HttpStatus.ACCEPTED)
 	async validateCode(@Body() body: ValidateCodeDTO): Promise<any> {
 		const auth = await this.emailValidateServices.validateAccount(body.apiKey, body.code);
-		return await this.authServices.login(auth, body.remember ?? false);
+		return await this.authServices.login(auth, body.remember ?? false, false);
 	}
 
 	@Post('resent-code')

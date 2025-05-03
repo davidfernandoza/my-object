@@ -10,7 +10,7 @@ import {
 } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 
-import { ItemServices } from '@item-v1/services/item.services';
+import { ItemServices } from '@item-v1/services/item.service';
 import { ItemInterface } from '@item-v1/interfaces/item.interface';
 import { isPublic } from '@common/decorators/is-public.decorator';
 import { CreateItemDTO } from '@item-v1/dtos/item.dto';

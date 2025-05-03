@@ -4,10 +4,10 @@ import { Auth } from '@database/entities/auth/auth.entity';
 import { RegisterDTO, RegisterResponseDTO } from '@auth/dtos/register.dto';
 import { AuthRepository } from '@database/repositories/auth/auth.repository';
 import { LoginResponseDTO } from '@auth/dtos/login.dto';
-import { JwtServices } from '@auth/services/jwt.services';
+import { JwtServices } from '@auth/services/jwt.service';
 import { IAuthService } from '@auth/interfaces/auth-service.interface';
 import { AuthTokenRepository } from '@database/repositories/auth/auth-token.repository';
-import { EmailValidateServices } from '@auth/submodules/email-validate/services/email-validate.services';
+import { EmailValidateServices } from '@auth/submodules/email-validate/services/email-validate.service';
 import { TokenType } from '@database/enums/auth/auth-token.enum';
 import { AuthToken } from '@database/entities/auth/auth-token.entity';
 
@@ -41,14 +41,18 @@ export class AuthServices implements IAuthService {
 	}
 
 	public async validateAuth(email: string, password: string): Promise<Auth> {
-		const auth = await this.authRepository.findOneBy({ email });
+		const auth = await this.authRepository.findOneBy({ email, isActive: true });
 		if (auth && (await auth.comparePassword(password))) {
 			return auth;
 		}
 		throw new UnauthorizedException('Credentials invalid');
 	}
 
-	public async login(auth: Auth, remember: boolean): Promise<LoginResponseDTO> {
+	public async login(
+		auth: Auth,
+		remember: boolean,
+		with2FA: boolean | null,
+	): Promise<LoginResponseDTO> {
 		const body = { id: auth.id };
 		const accessToken = this.jwtServices.generateAccessToken(body);
 		let refreshToken = null;
@@ -65,8 +69,8 @@ export class AuthServices implements IAuthService {
 			...refreshToken,
 			apiKey: null,
 			apiKeyExpiration: null,
-			withVerificationEmail: false,
-			with2FA: false,
+			withVerificationEmail: true,
+			with2FA,
 			remember,
 		};
 	}
@@ -84,14 +88,23 @@ export class AuthServices implements IAuthService {
 			if (!auth || auth.authTokens[0].token !== refreshToken) {
 				throw new UnauthorizedException('Token unavaliable');
 			}
-			return this.login(auth, true);
+			return this.login(auth, true, null);
 		} catch (error) {
 			throw new UnauthorizedException(error.message);
 		}
 	}
 
-	public async getAuthByApiKey(apiKey: string): Promise<AuthToken> {
-		return await this.authTokenRepository.getAuthByApiKey(apiKey);
+	public async getAuthByApiKey(
+		apiKey: string,
+		tokenTypeApiKey: TokenType,
+		tokenType?: TokenType,
+	): Promise<AuthToken> {
+		if (!tokenType) return await this.authTokenRepository.getAuthByApiKey(apiKey, tokenTypeApiKey);
+		return await this.authTokenRepository.getAuthByApiKeyAndToken(
+			apiKey,
+			tokenTypeApiKey,
+			tokenType,
+		);
 	}
 
 	async logout(idAuth: number, token: string): Promise<void> {

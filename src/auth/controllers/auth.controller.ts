@@ -17,25 +17,45 @@ import { ApiTags } from '@nestjs/swagger';
 import { RegisterDTO, RegisterResponseDTO } from '@auth/dtos/register.dto';
 import { LoginDTO, LoginResponseDTO } from '@auth/dtos/login.dto';
 
-import { AuthServices } from '@auth/services/auth.services';
+import { AuthServices } from '@auth/services/auth.service';
 import { IAuthService, IAuthRequest } from '@auth/interfaces/auth-service.interface';
 import { RefreshTokenDTO } from '@auth/dtos/jwt.dto';
 import { StrategyAuthGuard } from '@auth/guards/strategy-auth.guard';
 // import { IdRequiredPipe } from '@common/decorators/pipes/id-required.pipe';
 // import { AddIdInBodyInterceptor } from '@common/interceptors/add-id-in-body.interceptor';
 // import { ApiKeyGuard } from '@auth/guards/api-key.guard';
+import { EmailValidateServices } from '@auth/submodules/email-validate/services/email-validate.service';
+import { TwoFactorAuthService } from '@auth/submodules/2FA/services/two-factor-auth.service';
+import { ITwoFactorAuthService } from '@auth/submodules/2FA/interfaces/two-factor-auth-service.interface';
+import { IEmailValidateServices } from '@auth/submodules/email-validate/interfaces/email-validate-services.interface';
 
 @ApiTags('Auth')
 @Controller({ path: 'auth' })
 export class AuthController {
 	private authServices: IAuthService;
+	private emailValidateServices: IEmailValidateServices;
+	private twoFactorAuthServices: ITwoFactorAuthService;
 
-	constructor(private readonly authServicesSingleton: AuthServices) {
-		this.setAuthServices(this.authServicesSingleton);
+	constructor(
+		private readonly authServicesSingleton: AuthServices,
+		private readonly emailValidateServicesSingleton: EmailValidateServices,
+		private readonly twoFactorAuthServiceSingleton: TwoFactorAuthService,
+	) {
+		this.setAuthServices(
+			this.authServicesSingleton,
+			this.emailValidateServicesSingleton,
+			this.twoFactorAuthServiceSingleton,
+		);
 	}
 
-	setAuthServices(authServices: IAuthService) {
+	setAuthServices(
+		authServices: IAuthService,
+		emailValidateServices?: IEmailValidateServices,
+		twoFactorAuthServices?: ITwoFactorAuthService,
+	) {
 		this.authServices = authServices;
+		this.emailValidateServices = emailValidateServices;
+		this.twoFactorAuthServices = twoFactorAuthServices;
 	}
 
 	@Post('register')
@@ -51,7 +71,33 @@ export class AuthController {
 	async login(@Body() payload: LoginDTO): Promise<LoginResponseDTO> {
 		const { email, password, remember } = payload;
 		const auth = await this.authServices.validateAuth(email, password);
-		return this.authServices.login(auth, remember);
+
+		if (!auth.verificationEmailDate) {
+			const { apiKey, expiration } =
+				await this.emailValidateServices.sendVerificationCodeToEmail(auth);
+			return {
+				accessToken: null,
+				refreshToken: null,
+				apiKey,
+				apiKeyExpiration: expiration,
+				withVerificationEmail: false,
+				with2FA: null,
+				remember,
+			};
+		}
+		if (auth.with2FA && auth.secret2FA) {
+			const { apiKey, expiration } = await this.twoFactorAuthServices.createApiKey(auth);
+			return {
+				accessToken: null,
+				refreshToken: null,
+				apiKey,
+				apiKeyExpiration: expiration,
+				withVerificationEmail: true,
+				with2FA: true,
+				remember,
+			};
+		}
+		return this.authServices.login(auth, remember, false);
 	}
 
 	@Post('refresh-token')

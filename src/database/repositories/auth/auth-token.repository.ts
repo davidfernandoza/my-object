@@ -30,14 +30,27 @@ export class AuthTokenRepository extends Repository<AuthToken> {
 		return await this.save(newToken);
 	}
 
-	async getAuthByApiKey(apiKey: string) {
+	async getAuthByApiKey(apiKey: string, tokenTypeApiKey: TokenType): Promise<AuthToken> {
 		return await this.createQueryBuilder('token')
 			.leftJoinAndSelect('token.auth', 'auth')
-			.leftJoinAndSelect('auth.authTokens', 'tokens', 'tokens.type = :type', {
-				type: TokenType.VerificationEmailToken,
+			.where('token.token = :apiKey', { apiKey })
+			.andWhere('token.type = :tokenTypeApiKey', { tokenTypeApiKey })
+			.andWhere('auth.isActive = :isActive', { isActive: true })
+			.getOne();
+	}
+
+	async getAuthByApiKeyAndToken(
+		apiKey: string,
+		tokenTypeApiKey: TokenType,
+		tokenType: TokenType,
+	): Promise<AuthToken> {
+		return await this.createQueryBuilder('token')
+			.leftJoinAndSelect('token.auth', 'auth')
+			.leftJoinAndSelect('auth.authTokens', 'tokens', 'tokens.type = :tokenType', {
+				tokenType,
 			})
 			.where('token.token = :apiKey', { apiKey })
-			.andWhere('token.type = :tokenType', { tokenType: TokenType.VerificationEmailApiKey })
+			.andWhere('token.type = :tokenTypeApiKey', { tokenTypeApiKey })
 			.andWhere('auth.isActive = :isActive', { isActive: true })
 			.getOne();
 	}

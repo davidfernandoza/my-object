@@ -2,21 +2,28 @@ import * as qrcode from 'qrcode';
 import * as speakeasy from 'speakeasy';
 import * as crypto from 'crypto';
 
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { ITwoFactorAuthService } from '@auth/submodules/2FA/interfaces/two-factor-auth-service.interface';
 import { AuthRepository } from '@database/repositories/auth/auth.repository';
 import { ConfigService } from '@config/app.config';
+import { Auth } from '@database/entities/auth/auth.entity';
+import moment from 'moment';
+import { AuthTokenRepository } from '@database/repositories/auth/auth-token.repository';
+import { In } from 'typeorm';
+import { TokenType } from '@database/enums/auth/auth-token.enum';
 
 @Injectable()
 export class TwoFactorAuthService implements ITwoFactorAuthService {
 	private ivLength: number;
 	private encryptionSalt: string;
-	private algorithm: string = 'aes-256-cbc';
 	private nameApp: string;
+	private readonly algorithm: string = 'aes-256-cbc';
+	private readonly expirationMinutes: number = 30;
 
 	constructor(
 		private readonly authRepository: AuthRepository,
 		private readonly configService: ConfigService,
+		private readonly authTokenRepository: AuthTokenRepository,
 	) {
 		this.ivLength = Number(this.configService.getConfig().twoFactorAuth.encryptionIvLength);
 		this.encryptionSalt = this.configService.getConfig().twoFactorAuth.encryptionSalt;
@@ -34,6 +41,9 @@ export class TwoFactorAuthService implements ITwoFactorAuthService {
 			await this.authRepository.update(auth.id, { with2FA, secret2FA: null });
 			return { qrCode: null, status: false, secret: null };
 		}
+		if (auth.with2FA && auth.secret2FA) {
+			throw new BadRequestException('2FA already activated');
+		}
 		const { otpauthUrl, secretBase32 } = this.generateSecret(auth.email);
 		const secret2FA = this.encrypt(secretBase32);
 		const qrCode = await this.generateQRCode(otpauthUrl);
@@ -44,6 +54,9 @@ export class TwoFactorAuthService implements ITwoFactorAuthService {
 	public async activate2FA(idAuth: number): Promise<void> {
 		const auth = await this.authRepository.getOneById(idAuth);
 		if (!auth || !auth.secret2FA) throw new UnauthorizedException();
+		if (auth.with2FA && auth.secret2FA) {
+			throw new BadRequestException('2FA already activated');
+		}
 		await this.authRepository.update(auth.id, { with2FA: true });
 	}
 
@@ -57,6 +70,14 @@ export class TwoFactorAuthService implements ITwoFactorAuthService {
 			token: code,
 			window: 1,
 		});
+	}
+
+	async createApiKey(auth: Auth): Promise<{ apiKey: string; expiration: string }> {
+		const expiration = moment().add(this.expirationMinutes, 'minute').format('YYYY-MM-DD HH:mm:ss');
+		const apiKey = crypto.randomBytes(32).toString('hex');
+		await this.deleteTwoFactorTokens(auth);
+		await this.authTokenRepository.addToken(auth, apiKey, TokenType.TwoFAApiKey, expiration);
+		return { apiKey, expiration };
 	}
 
 	private generateSecret(email: string): { otpauthUrl: string; secretBase32: string } {
@@ -91,5 +112,12 @@ export class TwoFactorAuthService implements ITwoFactorAuthService {
 		let decrypted = decipher.update(encryptedSecretBase32);
 		decrypted = Buffer.concat([decrypted, decipher.final()]);
 		return decrypted.toString();
+	}
+
+	async deleteTwoFactorTokens(auth: Auth): Promise<void> {
+		await this.authTokenRepository.delete({
+			auth: auth,
+			type: In([TokenType.TwoFAApiKey, TokenType.TwoFAToken]),
+		});
 	}
 }

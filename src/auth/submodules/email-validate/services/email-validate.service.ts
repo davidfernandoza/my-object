@@ -70,7 +70,11 @@ export class EmailValidateServices implements IEmailValidateServices {
 	}
 
 	async validateAccount(apikey: string, code: string): Promise<Auth> {
-		const authToken = await this.authTokenRepository.getAuthByApiKey(apikey);
+		const authToken = await this.authTokenRepository.getAuthByApiKeyAndToken(
+			apikey,
+			TokenType.VerificationEmailApiKey,
+			TokenType.VerificationEmailToken,
+		);
 		if (!authToken) {
 			throw new UnauthorizedException('Invalid API key');
 		}
@@ -94,7 +98,11 @@ export class EmailValidateServices implements IEmailValidateServices {
 		apikey: string,
 		remember: boolean | null = null,
 	): Promise<ResentCodeResponseDTO> {
-		const authToken = await this.authTokenRepository.getAuthByApiKey(apikey);
+		const authToken = await this.authTokenRepository.getAuthByApiKeyAndToken(
+			apikey,
+			TokenType.VerificationEmailApiKey,
+			TokenType.VerificationEmailToken,
+		);
 		if (!authToken) {
 			throw new UnauthorizedException('Invalid API key');
 		}
