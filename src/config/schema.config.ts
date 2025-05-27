@@ -28,4 +28,8 @@ export const appConfigSchema = joi.object({
 	JWT_REFRESH_EXPIRATION: joi.string().max(2).required(),
 	TWO_FACTOR_AUTH_ENCRYPTION_SALT: joi.string().required(),
 	TWO_FACTOR_AUTH_ENCRYPTION_IV_LENGTH: joi.number().required(),
+	OAUTH_GOOGLE_CLIENT_ID: joi.string().required(),
+	OAUTH_GOOGLE_CLIENT_SECRET: joi.string().required(),
+	OAUTH_GOOGLE_CALLBACK_URL: joi.string().required().uri(),
+	OAUTH_URL_FRONT_REDIRECT: joi.string().required().uri(),
 });

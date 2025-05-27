@@ -11,6 +11,9 @@ import { TwoFactorAuthModule } from '@auth/submodules/2FA/two-factor-auth.module
 import { EmailValidateAuthModule } from '@auth/submodules/email-validate/email-validate-auth.module';
 import { TwoFactorAuthService } from '@auth/submodules/2FA/services/two-factor-auth.service';
 import { EmailValidateServices } from '@auth/submodules/email-validate/services/email-validate.service';
+import { OauthService } from '@auth/submodules/oauth/services/oauth.service';
+import { GoogleStrategy } from '@auth/strategies/google.strategy';
+import { OauthModule } from '@auth/submodules/oauth/oauth.module';
 
 @Global()
 @Module({
@@ -19,10 +22,19 @@ import { EmailValidateServices } from '@auth/submodules/email-validate/services/
 		MessagesService,
 		JwtModule,
 		TwoFactorAuthModule,
+		OauthModule,
 		forwardRef(() => EmailValidateAuthModule),
 	],
 	controllers: [AuthController],
-	providers: [AuthServices, JwtServices, JwtStrategy, TwoFactorAuthService, EmailValidateServices],
-	exports: [AuthServices, JwtServices, JwtStrategy],
+	providers: [
+		AuthServices,
+		JwtServices,
+		JwtStrategy,
+		TwoFactorAuthService,
+		EmailValidateServices,
+		OauthService,
+		GoogleStrategy,
+	],
+	exports: [AuthServices, JwtServices, JwtStrategy, GoogleStrategy],
 })
 export class AuthModule {}

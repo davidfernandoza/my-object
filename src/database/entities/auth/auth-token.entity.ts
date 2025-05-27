@@ -26,8 +26,8 @@ export class AuthToken {
 		enum: [
 			'JWT[BlackAccessToken]',
 			'JWT[RefreshToken]',
-			'Oauth[RefreshToken]',
-			'Oauth[AccessToken]',
+			'Oauth[ApiKey]',
+			'Oauth[Token]',
 			'2FA[APiKey]',
 			'2FA[Token]',
 			'VerificationEmail[ApiKey]',

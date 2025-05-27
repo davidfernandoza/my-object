@@ -45,6 +45,14 @@ export const appConfig = registerAs('config', () => ({
 		encryptionSalt: process.env.TWO_FACTOR_AUTH_ENCRYPTION_SALT,
 		encryptionIvLength: process.env.TWO_FACTOR_AUTH_ENCRYPTION_IV_LENGTH,
 	},
+	oauth: {
+		urlFrontRedirect: process.env.OAUTH_URL_FRONT_REDIRECT,
+		google: {
+			clientId: process.env.OAUTH_GOOGLE_CLIENT_ID,
+			clientSecret: process.env.OAUTH_GOOGLE_CLIENT_SECRET,
+			callbackUrl: process.env.OAUTH_GOOGLE_CALLBACK_URL,
+		},
+	},
 	apiKey: process.env.API_KEY,
 }));
 

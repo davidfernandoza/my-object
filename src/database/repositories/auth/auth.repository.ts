@@ -19,6 +19,9 @@ export class AuthRepository extends Repository<Auth> {
 	async getOneById(id: number) {
 		return await this.findOne({ where: { id } });
 	}
+	async getAuthByEmail(email: string) {
+		return await this.findOne({ where: { email } });
+	}
 
 	async register(email: string, password: string) {
 		const passwordExpirationDate = moment()

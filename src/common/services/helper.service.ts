@@ -14,4 +14,15 @@ export class HelperService {
 		if (!dateTime) return nullResponse;
 		return moment().isAfter(moment(dateTime, 'YYYY-MM-DD HH:mm:ss'));
 	}
+
+	generateString(length: number): string {
+		let result = '';
+		while (result.length < length) {
+			result += crypto
+				.randomBytes(length)
+				.toString('base64')
+				.replace(/[^a-zA-Z0-9]/g, '');
+		}
+		return result.slice(0, length);
+	}
 }

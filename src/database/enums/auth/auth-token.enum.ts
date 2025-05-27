@@ -1,8 +1,8 @@
 export enum TokenType {
 	JWTBlackAccessToken = 'JWT[BlackAccessToken]',
 	JWTRefreshToken = 'JWT[RefreshToken]',
-	OauthRefreshToken = 'Oauth[RefreshToken]',
-	OauthAccessToken = 'Oauth[AccessToken]',
+	OauthApiKey = 'Oauth[ApiKey]',
+	OauthToken = 'Oauth[Token]',
 	TwoFAApiKey = '2FA[APiKey]',
 	TwoFAToken = '2FA[Token]',
 	VerificationEmailApiKey = 'VerificationEmail[ApiKey]',
